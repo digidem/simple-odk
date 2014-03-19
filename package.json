@@ -1,0 +1,25 @@
+{
+  "name": "odk-aggregate",
+  "version": "0.0.1",
+  "description": "ODK Aggregate for node.js which stores data in github",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/digidem/node-odk-aggregate.git"
+  },
+  "keywords": [
+    "odk",
+    "github"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "github-api": "~0.7.0",
+    "express": "~3.4.8",
+    "simple_blitline_node": "~2.0.1",
+    "knox": "~0.8.9",
+    "multiparty": "~3.2.3",
+    "xml2js": "~0.4.1",
+    "mkdirp": "~0.3.5",
+    "uuid": "~1.4.1"
+  }
+}
