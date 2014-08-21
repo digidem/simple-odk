@@ -1,15 +1,16 @@
 module.exports = {
-    mediaStore: "filesystem",
-    formStore: "filesystem",
+    mediaStore: process.env.MEDIA_STORE,
+    formStore: process.env.FORM_STORE,
     github: {
-        user: "digidem",
-        repo: "fediquep-data",
-        branch: "master"
+        user: process.env.GITHUB_USER,
+        repo: process.env.GITHUB_REPO,
+        branch: process.env.GITHUB_BRANCH
     },
     s3: {
-        bucket: "images.fediquep.org"
+        bucket: process.env.S3_BUCKET
     },
     filesystem: {
-        path: "odk_data/"
-    }
+        path: process.env.FILE_PATH
+    },
+    formServer: process.end.FORM_SERVER
 };
