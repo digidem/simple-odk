@@ -13,13 +13,14 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "github-api": "~0.7.0",
     "express": "~3.4.8",
-    "simple_blitline_node": "~2.0.1",
+    "github-api": "~0.7.0",
     "knox": "~0.8.9",
-    "multiparty": "~3.2.3",
-    "xml2js": "~0.4.1",
     "mkdirp": "~0.3.5",
-    "uuid": "~1.4.1"
+    "multiparty": "~3.2.3",
+    "request": "^2.40.0",
+    "simple_blitline_node": "~2.0.1",
+    "uuid": "~1.4.1",
+    "xml2js": "~0.4.1"
   }
 }

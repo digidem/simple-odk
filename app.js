@@ -2,6 +2,8 @@ var express = require('express');
 var multiparty = require('multiparty');
 var fs = require('fs');
 var path = require('path');
+var request = require('request');
+var config = require('./config.js');
 
 var persist = require('./lib/persist.js');
 var odk2json = require('./lib/odk2json.js');
@@ -24,6 +26,11 @@ app.use(function(req, res, next) {
 // Need to respond to HEAD request as stated in https://bitbucket.org/javarosa/javarosa/wiki/FormSubmissionAPI
 app.head('/submission', function(req, res) {
     res.send(204);
+});
+
+// Proxy requests to formList to a form server (e.g. formhub.org or odk-aggregate)
+app.get('/formList', function(req, res) {
+    req.pipe(request(config.formServer + "formList")).pipe(res);
 });
 
 // Receive webhook post

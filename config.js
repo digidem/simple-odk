@@ -12,5 +12,5 @@ module.exports = {
     filesystem: {
         path: process.env.FILE_PATH
     },
-    formServer: process.end.FORM_SERVER
+    formServer: process.env.FORM_SERVER
 };
