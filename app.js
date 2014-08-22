@@ -4,9 +4,20 @@ var fs = require('fs');
 var path = require('path');
 var request = require('request');
 var config = require('./config.js');
+var auth = require('basic-auth');
 
 var persist = require('./lib/persist.js');
 var odk2json = require('./lib/odk2json.js');
+
+// -- Private Variables --------------------------------------------------------
+
+/**
+Captures the charset value from an HTTP `Content-Type` response header.
+
+@var {RegExp} REGEX_CHARSET
+@final
+**/
+var REGEX_CHARSET = /;\s*charset\s*=\s*([^\s;]+)/i;
 
 // These headers are required according to https://bitbucket.org/javarosa/javarosa/wiki/OpenRosaRequest
 var OpenRosaHeaders = {
@@ -23,6 +34,24 @@ app.use(function(req, res, next) {
     next();
 });
 
+var requireAuthentication = function(req, res, next) {
+    var user = auth(req);
+
+    if (user === undefined) {
+        res.statusCode = 401;
+        res.setHeader('WWW-Authenticate', 'Basic realm="MyRealmName"');
+        res.send('Unauthorized');
+    } else {
+        next();
+    }
+};
+
+app.use(requireAuthentication);
+
+app.get('/', function(req, res) {
+    res.send("Hello World");
+});
+
 // Need to respond to HEAD request as stated in https://bitbucket.org/javarosa/javarosa/wiki/FormSubmissionAPI
 app.head('/submission', function(req, res) {
     res.send(204);
@@ -30,13 +59,27 @@ app.head('/submission', function(req, res) {
 
 // Proxy requests to formList to a form server (e.g. formhub.org or odk-aggregate)
 app.get('/formList', function(req, res) {
-    req.pipe(request(config.formServer + "formList")).pipe(res);
+    res.setHeader('content-type', 'text/xml');
+    req.pipe(request(config.formServer + "formList"))
+        .on('response',
+            function(incoming) {
+                // If the upstream server served this file with a specific character
+                // encoding, so should we.
+                var charset = REGEX_CHARSET.exec(incoming.headers['content-type']),
+                    type = 'text/xml';
+                if (charset) type += '; charset=' + charset[1];
+
+                incoming.headers['content-type'] = type;
+                res.writeHead(incoming.statusCode, incoming.headers);
+            })
+        .pipe(res);
 });
 
 // Receive webhook post
 app.post('/submission', function(req, res) {
     var start = Date.now();
-
+    var user = auth(req);
+    console.log("got past auth", user);
     // Create a Multiparty form parser which will calculate md5 hashes of each file received
     var form = new multiparty.Form({
         hash: "md5"
@@ -65,7 +108,7 @@ app.post('/submission', function(req, res) {
             // We store a reference to new filenames, to modify the references in the XML file later
             mediaFiles[file.originalFilename] = filename;
             // Persist the result, to the filesystem or to Amazon S3
-            persist(stream, filename, headers, function(err) {
+            persist(stream, filename, headers, user, function(err) {
                 if (err) console.log(err);
                 else console.log("saved ", filename);
             });
@@ -84,7 +127,7 @@ app.post('/submission', function(req, res) {
                     // Persist the result (could be filesystem, could be Github)
                     persist(result.json, filepath, {
                         "content-type": "text/xml"
-                    }, function(err) {
+                    }, user, function(err) {
                         if (err) console.log(err);
                         else console.log("saved ", filepath);
                     });
