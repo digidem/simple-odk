@@ -39,7 +39,7 @@ var requireAuthentication = function(req, res, next) {
 
     if (user === undefined) {
         res.statusCode = 401;
-        res.setHeader('WWW-Authenticate', 'Basic realm="MyRealmName"');
+        res.setHeader('WWW-Authenticate', 'Basic realm="Wapichanao ODK"');
         res.send('Unauthorized');
     } else {
         next();
