@@ -7,7 +7,9 @@ module.exports = {
         branch: process.env.GITHUB_BRANCH
     },
     s3: {
-        bucket: process.env.S3_BUCKET
+        bucket: process.env.S3_BUCKET,
+        key: S3_KEY,
+        secret: S3_SECRET
     },
     filesystem: {
         path: process.env.FILE_PATH

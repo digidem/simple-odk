@@ -3,20 +3,24 @@ var multiparty = require('multiparty');
 var fs = require('fs');
 var path = require('path');
 var request = require('request');
-var config = require('./config.js');
 var auth = require('basic-auth');
-
-var persist = require('./lib/persist.js');
+var config = require('./config.js');
 var odk2json = require('./lib/odk2json.js');
+var saveMedia, saveForm;
 
-// -- Private Variables --------------------------------------------------------
+if (config.mediaStore === "s3") {
+    saveMedia = require('./lib/persist-s3.js');
+} else {
+    saveMedia = require('./lib/persist-fs.js');
+}
 
-/**
-Captures the charset value from an HTTP `Content-Type` response header.
+if (config.formStore === "github") {
+    saveForm = require('./lib/persist-github.js');
+} else {
+    saveForm = require('./lib/persist-fs.js');
+}
 
-@var {RegExp} REGEX_CHARSET
-@final
-**/
+// Captures the charset value from an HTTP `Content-Type` response header.
 var REGEX_CHARSET = /;\s*charset\s*=\s*([^\s;]+)/i;
 
 // These headers are required according to https://bitbucket.org/javarosa/javarosa/wiki/OpenRosaRequest
@@ -34,7 +38,7 @@ app.use(function(req, res, next) {
     next();
 });
 
-var requireAuthentication = function(req, res, next) {
+app.use(function(req, res, next) {
     var user = auth(req);
 
     if (user === undefined) {
@@ -44,9 +48,7 @@ var requireAuthentication = function(req, res, next) {
     } else {
         next();
     }
-};
-
-app.use(requireAuthentication);
+});
 
 app.get('/', function(req, res) {
     res.send("Hello World");
@@ -79,7 +81,7 @@ app.get('/formList', function(req, res) {
 app.post('/submission', function(req, res) {
     var start = Date.now();
     var user = auth(req);
-    console.log("got past auth", user);
+
     // Create a Multiparty form parser which will calculate md5 hashes of each file received
     var form = new multiparty.Form({
         hash: "md5"
@@ -89,10 +91,11 @@ app.post('/submission', function(req, res) {
     var xmlFile;
 
     form.on('file', function(name, file) {
+        var options = {};
         // We will need the content-type and content-length for Amazon S3 uploads
         // (this is why we can't stream the response directly to S3, since
         //  we don't know the file size until we receive the whole file)
-        var headers = {
+        options.headers = {
             "content-type": file.headers["content-type"],
             "content-length": file.size
         };
@@ -103,12 +106,12 @@ app.post('/submission', function(req, res) {
         } else {
             // Any other files, stream them to persist them.
             var stream = fs.createReadStream(file.path);
-            // The filename is the md5 hash of the file with the original filename
-            var filename = file.hash + path.extname(file.originalFilename);
+            // The filename is the md5 hash of the file with the original extension
+            options.filename = file.hash + path.extname(file.originalFilename);
             // We store a reference to new filenames, to modify the references in the XML file later
-            mediaFiles[file.originalFilename] = filename;
+            mediaFiles[file.originalFilename] = options.filename;
             // Persist the result, to the filesystem or to Amazon S3
-            persist(stream, filename, headers, user, function(err) {
+            saveMedia(stream, options, function(err) {
                 if (err) console.log(err);
                 else console.log("saved ", filename);
             });
@@ -122,12 +125,13 @@ app.post('/submission', function(req, res) {
             fs.readFile(xmlFile, function(err, data) {
                 // parse the xml form response into a JSON string.
                 odk2json(data, mediaFiles, req.query, function(err, result) {
+                    var options = {};
                     // Place forms in a folder named with the formId, and name the form from its instanceId
-                    var filepath = result.formId + "/" + result.instanceId.replace(/^uuid:/, "") + ".json";
+                    options.filename = result.formId + "/" + result.instanceId.replace(/^uuid:/, "") + ".json";
+                    options.headers = { "content-type": "text/xml" };
+                    options.auth = user;
                     // Persist the result (could be filesystem, could be Github)
-                    persist(result.json, filepath, {
-                        "content-type": "text/xml"
-                    }, user, function(err) {
+                    saveForm(result.json, options, function(err) {
                         if (err) console.log(err);
                         else console.log("saved ", filepath);
                     });
