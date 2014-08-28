@@ -8,6 +8,7 @@ var config = require('./config.js');
 var xform2json = require('./lib/xform2json.js');
 var saveMedia, saveForm;
 
+// Configure the persistance store for the forms and the media
 if (config.mediaStore === "s3") {
     saveMedia = require('./lib/persist-s3.js');
 } else {
@@ -33,11 +34,16 @@ var app = express();
 
 app.use(express.logger('dev'));
 
+// All responses should include required OpenRosa headers.
 app.use(function(req, res, next) {
     res.set(OpenRosaHeaders);
     next();
 });
 
+// If we are storing files on Github then we force the client (ODK Collect) to send
+// authorization headers, but we don't check credentials here, but just pass them
+// through to Github. Github responds to unauthorized requests with status 404 not 401,
+// so we need to add this to force ODK Collect to send authorization headers.
 if (config.formStore === 'github' || config.mediaStore === 'github') {
     app.use(function(req, res, next) {
         var user = auth(req);
@@ -52,6 +58,7 @@ if (config.formStore === 'github' || config.mediaStore === 'github') {
     });
 }
 
+// *TODO* add a page describing the service here.
 app.get('/', function(req, res) {
     res.send("Hello World");
 });
@@ -65,14 +72,15 @@ app.head('/submission', function(req, res) {
 app.get('/formList', function(req, res) {
     res.setHeader('content-type', 'text/xml');
     req.pipe(request(config.formServer + "formList"))
-        .on('response',
-            function(incoming) {
+        .on('response', function(incoming) {
                 // If the upstream server served this file with a specific character
                 // encoding, so should we.
                 var charset = REGEX_CHARSET.exec(incoming.headers['content-type']),
                     type = 'text/xml';
                 if (charset) type += '; charset=' + charset[1];
 
+                // We need to correct the content type on proxied formLists from Github, which are served
+                // as text/plain by default, which ODK Collect does not like.
                 incoming.headers['content-type'] = type;
                 res.writeHead(incoming.statusCode, incoming.headers);
                 response.pipe(res);
@@ -86,6 +94,8 @@ app.get('/formList', function(req, res) {
 // Receive webhook post
 app.post('/submission', function(req, res) {
     var start = Date.now();
+    // Store the user authentication credentials, since we will need to pass these through to
+    // Github later.
     var user = auth(req);
 
     // Create a Multiparty form parser which will calculate md5 hashes of each file received
