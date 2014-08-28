@@ -26,7 +26,7 @@ var REGEX_CHARSET = /;\s*charset\s*=\s*([^\s;]+)/i;
 
 // These headers are required according to https://bitbucket.org/javarosa/javarosa/wiki/OpenRosaRequest
 var OpenRosaHeaders = {
-    "X-OpenRosa-Accept-Content-Length": process.env.ACCEPT_CONTENT_LENGTH,
+    "X-OpenRosa-Accept-Content-Length": config.acceptContentLength,
     "X-OpenRosa-Version": "1.0"
 };
 
@@ -93,7 +93,6 @@ app.get('/formList', function(req, res) {
 
 // Receive webhook post
 app.post('/submission', function(req, res) {
-    var start = Date.now();
     // Store the user authentication credentials, since we will need to pass these through to
     // Github later.
     var user = auth(req);
