@@ -38,17 +38,19 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.use(function(req, res, next) {
-    var user = auth(req);
+if (config.formStore === 'github' || config.mediaStore === 'github') {
+    app.use(function(req, res, next) {
+        var user = auth(req);
 
-    if (user === undefined) {
-        res.statusCode = 401;
-        res.setHeader('WWW-Authenticate', 'Basic realm="Wapichanao ODK"');
-        res.send('Unauthorized');
-    } else {
-        next();
-    }
-});
+        if (user === undefined) {
+            res.statusCode = 401;
+            res.setHeader('WWW-Authenticate', 'Basic realm="Wapichanao ODK"');
+            res.send('Unauthorized');
+        } else {
+            next();
+        }
+    });
+}
 
 app.get('/', function(req, res) {
     res.send("Hello World");
