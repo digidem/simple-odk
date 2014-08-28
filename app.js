@@ -75,8 +75,12 @@ app.get('/formList', function(req, res) {
 
                 incoming.headers['content-type'] = type;
                 res.writeHead(incoming.statusCode, incoming.headers);
+                response.pipe(res);
             })
-        .pipe(res);
+        .on('error', function(err) {
+            console.log(err);
+            res.send(500, "Problem connecting to form server");
+        });
 });
 
 // Receive webhook post
