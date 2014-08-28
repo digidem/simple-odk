@@ -83,7 +83,7 @@ app.get('/formList', function(req, res) {
                 // as text/plain by default, which ODK Collect does not like.
                 incoming.headers['content-type'] = type;
                 res.writeHead(incoming.statusCode, incoming.headers);
-                response.pipe(res);
+                incoming.pipe(res);
             })
         .on('error', function(err) {
             console.log(err);
