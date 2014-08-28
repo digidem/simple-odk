@@ -96,6 +96,12 @@ app.post('/submission', function(req, res) {
     var mediaFiles = {};
     var xmlFile;
 
+    function onSave(err, filename) {
+        // *TODO* we should send some kind of alert if the files were not saved.
+        if (err) console.log(err);
+        else console.log("saved ", filename);
+    }
+
     form.on('file', function(name, file) {
         var options = {};
         // We will need the content-type and content-length for Amazon S3 uploads
@@ -117,10 +123,7 @@ app.post('/submission', function(req, res) {
             // We store a reference to new filenames, to modify the references in the XML file later
             mediaFiles[file.originalFilename] = options.filename;
             // Persist the result, to the filesystem or to Amazon S3
-            saveMedia(stream, options, function(err) {
-                if (err) console.log(err);
-                else console.log("saved ", filename);
-            });
+            saveMedia(stream, options, onSave);
         }
     });
 
@@ -134,13 +137,10 @@ app.post('/submission', function(req, res) {
                     var options = {};
                     // Place forms in a folder named with the formId, and name the form from its instanceId
                     options.filename = result.formId + "/" + result.instanceId.replace(/^uuid:/, "") + ".json";
-                    options.headers = { "content-type": "text/xml" };
                     options.auth = user;
                     // Persist the result (could be filesystem, could be Github)
-                    saveForm(result.json, options, function(err) {
-                        if (err) console.log(err);
-                        else console.log("saved ", filepath);
-                    });
+                    saveForm(result.json, options, onSave);
+                    // Let ODK Collect know we have received everything and are processing it
                     res.send(202);
                 });
             });
