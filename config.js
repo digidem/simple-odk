@@ -8,8 +8,8 @@ module.exports = {
     },
     s3: {
         bucket: process.env.S3_BUCKET,
-        key: S3_KEY,
-        secret: S3_SECRET
+        key: process.env.S3_KEY,
+        secret: process.env.S3_SECRET
     },
     filesystem: {
         path: process.env.FILE_PATH
