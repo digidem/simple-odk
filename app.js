@@ -5,7 +5,7 @@ var path = require('path');
 var request = require('request');
 var auth = require('basic-auth');
 var config = require('./config.js');
-var odk2json = require('./lib/odk2json.js');
+var xform2json = require('./lib/xform2json.js');
 var saveMedia, saveForm;
 
 if (config.mediaStore === "s3") {
@@ -124,7 +124,7 @@ app.post('/submission', function(req, res) {
         } else {
             fs.readFile(xmlFile, function(err, data) {
                 // parse the xml form response into a JSON string.
-                odk2json(data, mediaFiles, req.query, function(err, result) {
+                xform2json(data, mediaFiles, req.query, function(err, result) {
                     var options = {};
                     // Place forms in a folder named with the formId, and name the form from its instanceId
                     options.filename = result.formId + "/" + result.instanceId.replace(/^uuid:/, "") + ".json";
