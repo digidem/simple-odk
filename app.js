@@ -125,6 +125,7 @@ app.post('/submission', function(req, res) {
             // If the file is the xml form data, store a reference to it for later.
             xmlFile = file.path;
         } else {
+            console.log("Image received: " + file.path);
             // Any other files, stream them to persist them.
             var stream = fs.createReadStream(file.path);
             // The filename is the md5 hash of the file with the original extension
