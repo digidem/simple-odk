@@ -4,6 +4,7 @@ var fs = require('fs');
 var path = require('path');
 var request = require('request');
 var auth = require('basic-auth');
+var traverse = require('traverse');
 var config = require('./config.js');
 var xform2json = require('./lib/xform2json.js');
 var saveMedia, saveForm;
@@ -143,13 +144,23 @@ app.post('/submission', function(req, res) {
         } else {
             fs.readFile(xmlFile, function(err, data) {
                 // parse the xml form response into a JSON string.
-                xform2json(data, mediaFiles, req.query, function(err, result) {
+                xform2json(data, { deviceId: req.query.deviceID }, function(err, result) {
                     var options = {};
                     // Place forms in a folder named with the formId, and name the form from its instanceId
-                    options.filename = result.formId + "/" + result.instanceId.replace(/^uuid:/, "") + ".json";
+                    options.filename = result.meta.formId + "/" + result.meta.instanceId.replace(/^uuid:/, "") + ".json";
                     options.auth = user;
+                    traverse(result).forEach(function(value) {
+                        for (var prop in mediaFiles) {
+                            if (mediaFiles.hasOwnProperty(prop) && prop === value) {
+                                this.update({
+                                    url: "https://s3.amazonaws.com/" + config.s3.bucket + "/" + mediaFiles[prop],
+                                    originalFilename: prop
+                                }, true);
+                            } 
+                        }
+                    });
                     // Persist the result (could be filesystem, could be Github)
-                    saveForm(result.json, options, onSave);
+                    saveForm(JSON.stringify(result, null, "    "), options, onSave);
                     // Let ODK Collect know we have received everything and are processing it
                     res.send(202);
                 });
