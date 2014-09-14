@@ -97,6 +97,7 @@ app.post('/submission', function(req, res) {
     // Store the user authentication credentials, since we will need to pass these through to
     // Github later.
     var user = auth(req);
+    var taskCount = 0;
 
     // Create a Multiparty form parser which will calculate md5 hashes of each file received
     var form = new multiparty.Form({
@@ -107,9 +108,14 @@ app.post('/submission', function(req, res) {
     var xmlFile;
 
     function onSave(err, filename) {
-        // *TODO* we should send some kind of alert if the files were not saved.
-        if (err) console.log(err);
-        else console.log("saved ", filename);
+        taskCount -= 1;
+        if (err) {
+            console.log(err);
+            res.send(500, "Error processing form");
+        } else {
+            console.log("saved ", filename);
+            if (taskCount <= 0) res.send(201);
+        }
     }
 
     form.on('file', function(name, file) {
@@ -134,6 +140,7 @@ app.post('/submission', function(req, res) {
             // We store a reference to new filenames, to modify the references in the XML file later
             mediaFiles[file.originalFilename] = options.filename;
             // Persist the result, to the filesystem or to Amazon S3
+            taskCount += 1;
             saveMedia(stream, options, onSave);
         }
     });
@@ -149,6 +156,8 @@ app.post('/submission', function(req, res) {
                     // Place forms in a folder named with the formId, and name the form from its instanceId
                     options.filename = result.meta.formId + "/" + result.meta.instanceId.replace(/^uuid:/, "") + ".json";
                     options.auth = user;
+                    // Check through the form response for occurrances of the filenames for any attachments, 
+                    // replace the filename with the URL of the uploaded attachment on S3
                     traverse(result).forEach(function(value) {
                         for (var prop in mediaFiles) {
                             if (mediaFiles.hasOwnProperty(prop) && prop === value) {
@@ -160,9 +169,8 @@ app.post('/submission', function(req, res) {
                         }
                     });
                     // Persist the result (could be filesystem, could be Github)
+                    taskCount += 1;
                     saveForm(JSON.stringify(result, null, "    "), options, onSave);
-                    // Let ODK Collect know we have received everything and are processing it
-                    res.send(202);
                 });
             });
         }
