@@ -8,11 +8,11 @@ exports.config = {
   /**
    * Array of application names.
    */
-  app_name : ['Simple ODK'],
+  app_name : [process.env.NEW_RELIC_APP_NAME],
   /**
    * Your New Relic license key.
    */
-  license_key : process.env.NEWRELIC_KEY,
+  license_key : process.env.NEW_RELIC_LICENSE_KEY,
   error_collector : {
     enabled : true,
     /**
