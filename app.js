@@ -1,4 +1,9 @@
-require('newrelic');
+if (process.env.NODE_ENV==='production') {
+    require('nodetime').profile({
+        accountKey: process.env.NODETIME_ACCOUNT_KEY,
+        appName: 'SimpleODK'
+    });
+}
 var express = require('express');
 var multiparty = require('multiparty');
 var fs = require('fs');
