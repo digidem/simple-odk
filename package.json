@@ -15,7 +15,7 @@
   "dependencies": {
     "basic-auth": "^1.0.0",
     "express": "^3.4.8",
-    "github-api": "~0.7.0",
+    "github-api": "gmaclennan/github",
     "knox": "~0.8.9",
     "mkdirp": "~0.3.5",
     "multiparty": "~3.2.3",
