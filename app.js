@@ -5,186 +5,126 @@ if (process.env.NODE_ENV==='production') {
     });
 }
 var express = require('express');
-var multiparty = require('multiparty');
+var logger = require('morgan');
+var debug = require('debug')('simple-odk:core');
 var fs = require('fs');
 var path = require('path');
-var request = require('request');
 var auth = require('basic-auth');
+var xform2json = require('xform-to-json');
 var traverse = require('traverse');
+var formSubmissionMiddleware = require('openrosa-form-submission-middleware');
+
 var config = require('./config.js');
-var xform2json = require('./lib/xform2json.js');
-var saveMedia, saveForm;
-
-// Configure the persistance store for the forms and the media
-if (config.mediaStore === "s3") {
-    saveMedia = require('./lib/persist-s3.js');
-} else {
-    saveMedia = require('./lib/persist-fs.js');
-}
-
-if (config.formStore === "github") {
-    saveForm = require('./lib/persist-github.js');
-} else {
-    saveForm = require('./lib/persist-fs.js');
-}
-
-// Captures the charset value from an HTTP `Content-Type` response header.
-var REGEX_CHARSET = /;\s*charset\s*=\s*([^\s;]+)/i;
-
-// These headers are required according to https://bitbucket.org/javarosa/javarosa/wiki/OpenRosaRequest
-var OpenRosaHeaders = {
-    "X-OpenRosa-Accept-Content-Length": config.acceptContentLength,
-    "X-OpenRosa-Version": "1.0"
-};
+var saveMedia = require('./lib/persist-s3.js');
+var saveForm = require('./lib/persist-github.js');
+var simpleProxy = require('./lib/simple-proxy.js');
+var requireAuth = require('./lib/github-auth-passthrough');
 
 var app = express();
 
-app.use(express.logger('dev'));
+var S3_NAMESPACE = 'simpleodk';
 
-// All responses should include required OpenRosa headers.
-app.use(function(req, res, next) {
-    res.set(OpenRosaHeaders);
-    next();
+// Use 'dev' log formatting see http://www.senchalabs.org/connect/logger.html
+app.use(logger('dev'));
+
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500).send(err.message);
 });
-
-// If we are storing files on Github then we force the client (ODK Collect) to send
-// authorization headers, but we don't check credentials here, but just pass them
-// through to Github. Github responds to unauthorized requests with status 404 not 401,
-// so we need to add this to force ODK Collect to send authorization headers.
-if (config.formStore === 'github' || config.mediaStore === 'github') {
-    app.use(function(req, res, next) {
-        var user = auth(req);
-
-        if (user === undefined) {
-            res.statusCode = 401;
-            res.setHeader('WWW-Authenticate', 'Basic realm="Wapichanao ODK"');
-            res.send('Unauthorized');
-        } else {
-            next();
-        }
-    });
-}
 
 // *TODO* add a page describing the service here.
 app.get('/', function(req, res) {
     res.send("Hello World");
 });
 
-// Need to respond to HEAD request as stated in https://bitbucket.org/javarosa/javarosa/wiki/FormSubmissionAPI
-app.head('/submission', function(req, res) {
-    res.send(204);
+// Proxy requests to formList to github
+app.get('/:user/:repo/formList', requireAuth, function(req, res) {
+    proxyUrl = 'https://raw.githubusercontent.com/' + 
+                req.params.user + '/' + 
+                req.params.repo + '/master/forms/formList';
+    simpleProxy(req, res, proxyUrl);
 });
 
-// Proxy requests to formList to a form server (e.g. formhub.org or odk-aggregate)
-app.get('/formList', function(req, res) {
-    res.setHeader('content-type', 'text/xml');
-    req.pipe(request(config.formServer + "formList"))
-        .on('response', function(incoming) {
-                // If the upstream server served this file with a specific character
-                // encoding, so should we.
-                var charset = REGEX_CHARSET.exec(incoming.headers['content-type']),
-                    type = 'text/xml';
-                if (charset) type += '; charset=' + charset[1];
+// Use form submission middleware to parse data, saving temp files.
+app.route('/:user/:repo/submission')
+    .all(requireAuth)
+    .all(formSubmissionMiddleware())
+    .post(function(req, res, next) {
+    // Counter for async tasks on the xml req.body and each or req.files
+    var taskCount = 1 + req.files.length;
+    debug('Received xml submission and %s files', req.files.length);
 
-                // We need to correct the content type on proxied formLists from Github, which are served
-                // as text/plain by default, which ODK Collect does not like.
-                incoming.headers['content-type'] = type;
-                res.writeHead(incoming.statusCode, incoming.headers);
-                incoming.pipe(res);
-            })
-        .on('error', function(err) {
-            console.log(err);
-            res.send(500, "Problem connecting to form server");
-        });
-});
+    var s3bucket = [S3_NAMESPACE, req.params.user, req.params.repo].join('.');
 
-// Receive webhook post
-app.post('/submission', function(req, res) {
-    // Store the user authentication credentials, since we will need to pass these through to
-    // Github later.
-    var user = auth(req);
-    var taskCount = 0;
-
-    // Create a Multiparty form parser which will calculate md5 hashes of each file received
-    var form = new multiparty.Form({
-        hash: "md5"
-    });
-
-    var mediaFiles = {};
-    var xmlFile;
-
-    function onSave(err, filename) {
-        taskCount -= 1;
-        if (err) {
-            console.log(err);
-            res.send(500, "Error processing form");
-        } else {
-            console.log("saved ", filename);
-            if (taskCount <= 0) res.send(201);
+    var options = {
+        geojson: true,
+        meta: {
+            deviceId: req.query.deviceID,
+            submissionTime: new Date()
         }
-    }
+    };
 
-    form.on('file', function(name, file) {
-        var options = {};
-        // We will need the content-type and content-length for Amazon S3 uploads
-        // (this is why we can't stream the response directly to S3, since
-        //  we don't know the file size until we receive the whole file)
-        options.headers = {
-            "content-type": file.headers["content-type"],
-            "content-length": file.size
+    xform2json(req.body, options, function(err, form) {
+        if (err) onError(err);
+        var meta = options.geojson ? form.properties.meta : form.meta;
+        var instanceId = meta.instanceId.replace(/^uuid:/, "");
+        var s3baseUrl = "https://s3.amazonaws.com/" + s3bucket + "/" + instanceId + "/";
+
+        // Update references to media files to include links to the file stored on s3
+        traverse(form).forEach(function(value) {
+            req.files.forEach(function(file) {
+                if (file.originalFilename === value) {
+                    this.update({
+                        url: s3baseUrl + file.originalFilename,
+                        originalFilename: file.originalFilename
+                    }, true);
+                } 
+            }, this);
+        });
+
+        var ext = options.geojson ? ".geojson" : ".json";
+
+        // Place forms in a folder named with the formId, and name the form from its instanceId
+        options = {
+            filename: meta.formId + "/" + instanceId + ext,
+            auth: auth(req),
+            user: req.params.user,
+            repo: req.params.repo
         };
 
-        if (name === "xml_submission_file") {
-            // If the file is the xml form data, store a reference to it for later.
-            xmlFile = file.path;
-        } else {
-            console.log("Image received: " + file.path);
-            // Any other files, stream them to persist them.
-            var stream = fs.createReadStream(file.path);
-            // The filename is the md5 hash of the file with the original extension
-            options.filename = file.hash + path.extname(file.originalFilename);
-            // We store a reference to new filenames, to modify the references in the XML file later
-            mediaFiles[file.originalFilename] = options.filename;
-            // Persist the result, to the filesystem or to Amazon S3
-            taskCount += 1;
-            saveMedia(stream, options, onSave);
-        }
+        // save form submission to github
+        saveForm(JSON.stringify(form, null, "    "), options, onSave);
+
+        req.files.forEach(function(file) {
+            var options = {
+                filename: instanceId + '/' + file.originalFilename,
+                s3bucket: s3bucket,
+                file: file
+            };
+            // save attached media files to Amazon S3
+            saveMedia(fs.createReadStream(file.path), options, onSave);
+        });
     });
 
-    form.on('close', function() {
-        if (!xmlFile) {
-            res.send(400, "Missing xml file");
-        } else {
-            fs.readFile(xmlFile, function(err, data) {
-                // parse the xml form response into a JSON string.
-                xform2json(data, { deviceId: req.query.deviceID }, function(err, result) {
-                    var options = {};
-                    // Place forms in a folder named with the formId, and name the form from its instanceId
-                    options.filename = result.meta.formId + "/" + result.meta.instanceId.replace(/^uuid:/, "") + ".json";
-                    options.auth = user;
-                    // Check through the form response for occurrances of the filenames for any attachments, 
-                    // replace the filename with the URL of the uploaded attachment on S3
-                    traverse(result).forEach(function(value) {
-                        for (var prop in mediaFiles) {
-                            if (mediaFiles.hasOwnProperty(prop) && prop === value) {
-                                this.update({
-                                    url: "https://s3.amazonaws.com/" + config.s3.bucket + "/" + mediaFiles[prop],
-                                    originalFilename: prop
-                                }, true);
-                            } 
-                        }
-                    });
-                    // Persist the result (could be filesystem, could be Github)
-                    taskCount += 1;
-                    saveForm(JSON.stringify(result, null, "    "), options, onSave);
-                });
+    function onSave(err) {
+        if (err) onError(err);
+        taskCount--;
+        if (taskCount > 0) return;
+        cleanupFiles();
+        res.status(201).end();
+    }
+
+    function onError(err) {
+        cleanupFiles();
+        next(err);
+    }
+
+    function cleanupFiles() {
+        req.files.forEach(function(file) {
+            fs.unlink(file.path, function(err) {
+                if (err) debug('Error deleting file %s', file.path);
             });
-        }
-    });
-
-    // Close connection
-    form.parse(req);
-
+        });
+    }
 });
 
 // Start server
