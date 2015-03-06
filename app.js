@@ -24,8 +24,8 @@ var app = express();
 
 var S3_NAMESPACE = 'simpleodk';
 
-// Use 'dev' log formatting see http://www.senchalabs.org/connect/logger.html
-app.use(logger('dev'));
+// Use 'combined' log formatting see https://github.com/expressjs/morgan
+app.use(logger('combined'));
 
 app.use(function(err, req, res, next) {
     res.status(err.status || 500).send(err.message);
