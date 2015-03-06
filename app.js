@@ -38,8 +38,8 @@ app.get('/', function(req, res) {
 
 // Proxy requests to formList to github
 app.get('/:user/:repo/formList', requireAuth, function(req, res) {
-    proxyUrl = 'https://raw.githubusercontent.com/' + 
-                req.params.user + '/' + 
+    proxyUrl = 'https://raw.githubusercontent.com/' +
+                req.params.user + '/' +
                 req.params.repo + '/master/forms/formList';
     simpleProxy(req, res, proxyUrl);
 });
@@ -77,7 +77,7 @@ app.route('/:user/:repo/submission')
                         url: s3baseUrl + file.originalFilename,
                         originalFilename: file.originalFilename
                     }, true);
-                } 
+                }
             }, this);
         });
 
