@@ -1,16 +1,21 @@
-// Proxies a request for a formlist ensuring it returns the correct
-// content-type headers
+/**
+ * Proxies a request for a formlist to github ensuring it returns the correct
+ * content-type headers
+ */
+var getCharset = require('charset');
+var request = require('request');
 
-var urljoin = require('url-join');
-var charset = require('charset');
+module.exports = function(req, res) {
+    var url = 'https://raw.githubusercontent.com/' +
+                req.params.user + '/' +
+                req.params.repo + '/master/forms/formList';
 
-module.exports = function(req, res, url) {
     res.setHeader('content-type', 'text/xml');
     req.pipe(request(url))
         .on('response', function(incoming) {
             // If the upstream server served this file with a specific character
             // encoding, so should we.
-            var charset = charset(incoming.headers['content-type']),
+            var charset = getCharset(incoming.headers['content-type']),
                 type = 'text/xml';
             if (charset) type += '; charset=' + charset;
 
@@ -22,6 +27,6 @@ module.exports = function(req, res, url) {
         })
         .on('error', function(err) {
             console.log(err);
-            res.send(500, "Problem connecting to form server");
+            res.send(500, 'Problem connecting to form server');
         });
 };

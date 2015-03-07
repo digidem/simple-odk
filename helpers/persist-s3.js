@@ -1,15 +1,14 @@
 // Saves a String, Buffer or Stream to Amazon S3
 
 var knox = require('knox');
-var config = require('../config');
 var stream = require('stream');
 var debug = require('debug')('simple-odk:persist-s3');
 
 module.exports = function(data, options, callback) {
 
     var s3Client = knox.createClient({
-        key: config.s3key,
-        secret: config.s3secret,
+        key: options.s3key || process.env.S3_KEY,
+        secret: options.s3secret || process.env.S3_SECRET,
         bucket: options.s3bucket
     });
 
