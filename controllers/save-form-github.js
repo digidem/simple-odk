@@ -16,7 +16,7 @@ function saveForm(req, res, next) {
         repo = req.params.repo,
         ext = submission.geojson ? '.geojson' : '.json',
         filename = 'submissions/' + submission.formId + '/' + submission.instanceId + ext,
-        json = JSON.stringify(submission.json),
+        json = JSON.stringify(submission.json, null, '  '),
         auth = basicAuth(req),
         options = extend(defaults, options);
 
