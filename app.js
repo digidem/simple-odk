@@ -1,5 +1,4 @@
 var express = require('express');
-var logger = require('morgan');
 
 var defaultRoute = require('./routes/default-route');
 var github = require('./routes/github');
@@ -8,8 +7,6 @@ var gist = require('./routes/gist');
 
 var app = express();
 
-// Use 'combined' log formatting see https://github.com/expressjs/morgan
-app.use(logger('combined'));
 var error    = require('./controllers/error-handler');
 
 // Allows default handler for custom installs attached to a particular store
