@@ -12,6 +12,7 @@ app.use(logger('combined'));
 
 app.use('/gh/:user/:repo', github);
 
+app.use('/fb/:appname', firebase);
 
 // Allows default handler for custom installs attached to a particular store
 app.use('/', defaultRoute);
