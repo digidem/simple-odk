@@ -10,6 +10,7 @@ var app = express();
 
 // Use 'combined' log formatting see https://github.com/expressjs/morgan
 app.use(logger('combined'));
+var error    = require('./controllers/error-handler');
 
 // Allows default handler for custom installs attached to a particular store
 app.use('/', defaultRoute);
@@ -20,15 +21,7 @@ app.use('/fb/:appname', firebase);
 
 app.use('/gist/:gist_id', gist);
 
-// Log errors
-app.use(function logErrors(err, req, res, next) {
-  console.error(err.stack);
-  next(err);
-});
-
-// Client Error handler
-app.use(function clientErrorHandler(err, req, res) {
-    res.status(err.status || 500).send({ error: 'Something went wrong' });
-});
+// Handle errors
+app.use(error);
 
 module.exports = app;
