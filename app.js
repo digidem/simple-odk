@@ -1,16 +1,12 @@
-var express = require('express');
+var express  = require('express');
 
-var defaultRoute = require('./routes/default-route');
-var github = require('./routes/github');
+var github   = require('./routes/github');
 var firebase = require('./routes/firebase');
-var gist = require('./routes/gist');
-
-var app = express();
+var gist     = require('./routes/gist');
 
 var error    = require('./controllers/error-handler');
 
-// Allows default handler for custom installs attached to a particular store
-app.use('/', defaultRoute);
+var app = express();
 
 app.use('/gh/:user/:repo', github);
 
