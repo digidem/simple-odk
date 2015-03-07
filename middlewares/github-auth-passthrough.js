@@ -4,7 +4,7 @@ var request = require('request');
 
 var appName = process.env.APP_NAME || "SimpleODK";
 
-request.defaults({
+request = request.defaults({
     headers: { "User-Agent": appName }
 });
 
@@ -22,7 +22,6 @@ function GithubAuth() {
                 if (response.statusCode === 200) return next();
                 var err = new Error('Authentication error');
                 err.status = response.statusCode;
-                response.pipe(process.stdout);
                 next(err);
             })
             .on('error', next);
