@@ -1,0 +1,10 @@
+{
+  "submission": {
+    "json": {
+      "a": "b"
+    },
+    "geojson": true,
+    "formId": "abcd",
+    "instanceId": "efgh"
+  }
+}
