@@ -1,28 +1,17 @@
 /**
  * Reads an Octocat Github repo for any xforms in the folder `FORMS_FOLDER`
- * @returns {Array} an array of streams to the forms.
+ * @returns {Array} an array of urls to the forms.
  */
 var Octokat  = require('octokat');
 var request = require('request');
 
 var FORMS_FOLDER = 'forms';
 
-function getFormStreams(options, cb) {
+function getFormUrls(options, cb) {
 
   var octoOptions;
 
-  var reqOptions = {
-    headers: {
-      'User-Agent': 'Simple ODK',
-      'Accept': 'application/vnd.github.v3.raw'
-    }
-  };
-
   if (options.auth) {
-    reqOptions.auth = {
-      user: options.auth.name,
-      pass: options.auth.pass
-    };
     octoOptions = {
       username: options.auth.name,
       password: options.auth.pass
@@ -46,10 +35,7 @@ function getFormStreams(options, cb) {
         repo.git.trees(tree.sha + '?recursive=1').fetch(function(err, tree) {
           if (err) return cb(err);
           var formUrls = reduceTree(tree);
-          var formStreams = formUrls.map(function(url) {
-            return request(url, reqOptions);
-          });
-          cb(null, formStreams);
+          cb(null, formUrls);
         });
       });
     });
@@ -64,4 +50,4 @@ function getFormStreams(options, cb) {
   }
 }
 
-module.exports = getFormStreams;
+module.exports = getFormUrls;

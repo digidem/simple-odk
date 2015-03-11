@@ -4,11 +4,9 @@
  */
 
 var basicAuth = require('basic-auth');
-var async = require('async');
+var createFormList = require('openrosa-formlist');
 var debug = require('debug')('simple-odk:get-formlist-github');
-var getFormStreams = require('../helpers/get-form-streams-github');
-var parseFormMeta = require('../helpers/parse-form-meta');
-var createFormlist = require('../helpers/create-formlist');
+var getFormUrls = require('../helpers/get-form-urls-github');
 
 module.exports = function(req, res, next) {
   var auth = basicAuth(req);
@@ -18,21 +16,22 @@ module.exports = function(req, res, next) {
     repo: req.params.repo
   };
 
-  if (auth) {
-    options.auth = {
-      name: auth.name,
-      pass: auth.pass
-    };
-  }
-
-  getFormStreams(options, function(err, formStreams) {
+  getFormUrls(options, function(err, formUrls) {
     if (err) return next(err);
-    async.map(formStreams, parseFormMeta, function(err, formMeta) {
-      if (err) next(err);
-      res.status(200).send(createFormlist(formMeta));
+    var options;
+
+    if (auth) {
+      options = {
+        auth: {
+          user: auth.name,
+          pass: auth.pass
+        }
+      };
+    }
+
+    createFormList(formUrls, options, function(err, formlistXml) {
+      if (err) return next(err);
+      res.status(200).send(formlistXml);
     });
   });
-
 };
-
-
