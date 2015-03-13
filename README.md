@@ -1,6 +1,8 @@
 Simple ODK
 =============
 
+[![Build Status](https://travis-ci.org/digidem/simple-odk.svg)](https://travis-ci.org/digidem/simple-odk)
+
 **Currently experimental, things will change and potentially break**
 
 This is a minimal server for [OpenDataKit (ODK)](http://www.opendatakit.org/) that uses [Github](http://github.com/) for storing form submissions as geojson files, and media files on [Amazon S3](http://aws.amazon.com/s3/). It can receive form submissions from ODK Collect. Authentication is passed through to Github - you will need to enter your github username and password in ODK Collect.
