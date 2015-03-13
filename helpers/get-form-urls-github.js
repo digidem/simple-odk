@@ -3,6 +3,7 @@
  * @returns {Array} an array of urls to the forms.
  */
 var Octokat  = require('octokat');
+var debug = require('debug')('simple-odk:get-form-urls-github');
 
 var FORMS_FOLDER = 'forms';
 
@@ -27,10 +28,12 @@ function getFormUrls(options, cb) {
       if (err) return cb(err);
       repo.git.trees(commit.tree.sha).fetch(function(err, tree) {
         if (err) return cb(err);
-        tree = tree.tree.reduce(function(leaf) {
+        tree = tree.tree.reduce(function(prev, leaf) {
           if (leaf.path === FORMS_FOLDER && leaf.type === 'tree')
             return leaf;
         });
+        debug('sha for forms folder', tree.sha);
+        if (!tree) cb(new Error("can't find forms folder"));
         repo.git.trees(tree.sha + '?recursive=1').fetch(function(err, tree) {
           if (err) return cb(err);
           var formUrls = reduceTree(tree);

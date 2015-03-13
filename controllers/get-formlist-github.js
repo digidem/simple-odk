@@ -19,7 +19,7 @@ module.exports = function(req, res, next) {
     }
   };
 
-  debug('Called formList for repo %s auth %s', options.user + '/' + options.repo, auth && auth.user);
+  debug('Called formList for repo %s auth %s', options.user + '/' + options.repo, auth && auth.name);
 
   getFormUrls(options, function(err, formUrls) {
     if (err) return next(err);
