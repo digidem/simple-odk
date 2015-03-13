@@ -20,10 +20,8 @@ module.exports = function(req, res, next) {
   };
 
   if (auth) {
-    options.auth = {
-      user: auth.name,
-      pass: auth.pass
-    };
+    options.auth = auth;
+    options.auth.user = auth.name;
   }
 
   debug('Called formList for repo %s auth %s', options.user + '/' + options.repo, auth && auth.name);
