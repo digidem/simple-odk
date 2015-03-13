@@ -1,6 +1,6 @@
 {
   "name": "simple-odk",
-  "version": "1.0.0-dev",
+  "version": "1.0.1-dev",
   "description": "A minimal ODK server for receiving form submissions from a mobile device and saving them as JSON on github",
   "main": "app.js",
   "repository": {

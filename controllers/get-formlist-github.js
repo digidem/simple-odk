@@ -5,7 +5,7 @@
 
 var basicAuth = require('basic-auth');
 var createFormList = require('openrosa-formlist');
-// var debug = require('debug')('simple-odk:get-formlist-github');
+var debug = require('debug')('simple-odk:get-formlist-github');
 var getFormUrls = require('../helpers/get-form-urls-github');
 
 module.exports = function(req, res, next) {
@@ -18,6 +18,8 @@ module.exports = function(req, res, next) {
       'User-Agent': 'simple-odk'
     }
   };
+
+  debug('Called formList for repo %s auth %s', options.user + '/' + options.repo, auth && auth.user);
 
   getFormUrls(options, function(err, formUrls) {
     if (err) return next(err);
