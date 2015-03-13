@@ -1,13 +1,10 @@
 var test = require('tape');
 var request = require('supertest');
 var express = require('express');
-var saveForm = require('../../controllers/get-formlist-github');
+var proxyquire = require('proxyquire').noPreserveCache();
 var extend = require('xtend/mutable');
-var dotenv = require('dotenv');
 var fs = require('fs');
 var app = express();
-
-dotenv.load();
 
 // Mock the req
 function mockReq(req, res, next) {
@@ -15,13 +12,36 @@ function mockReq(req, res, next) {
   next();
 }
 
-app.get('/', mockReq, saveForm);
+var formUrls = require('../fixtures/formlist-github').array;
+var formlistXml = fs.readFileSync(__dirname + '/../fixtures/formlist.xml').toString().trim();
 
-var expected = fs.readFileSync(__dirname + '/../fixtures/formlist.xml').toString().replace(/\n$/, '');
+var stubs = {
+  '../helpers/get-form-urls-github': function(options, callback) {
+    test('Calls formlist with the correct options', function(t) {
+      t.equal(options.user, 'digidem-test');
+      t.equal(options.repo, 'xform-test');
+      t.equal(options.headers['User-Agent'], 'simple-odk');
+      t.end();
+    });
+    callback(null, formUrls);
+  },
+  'openrosa-formlist': function(formUrls, options, callback) {
+    callback(null, formlistXml);
+  }
+};
 
-request(app).get('/')
-  .auth(process.env.GITHUB_TOKEN, 'x-oauth-basic')
-  .expect(200, expected)
-  .end(function(err, res) {
-    console.log(err);
-  });
+var getFormlist = proxyquire('../../controllers/get-formlist-github', stubs);
+
+app.get('/', mockReq, getFormlist);
+
+test('Request to formlist returns valid content-type', function(t) {
+  request(app).get('/')
+    .expect('content-type', 'text/xml; charset=utf-8')
+    .end(t.end);
+});
+
+test('Request to formlist returns expected formlist Xml', function(t) {
+  request(app).get('/')
+    .expect(200, formlistXml)
+    .end(t.end);
+});

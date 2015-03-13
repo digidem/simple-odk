@@ -3,7 +3,6 @@
  * @returns {Array} an array of urls to the forms.
  */
 var Octokat  = require('octokat');
-var request = require('request');
 
 var FORMS_FOLDER = 'forms';
 
