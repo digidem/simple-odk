@@ -8,6 +8,7 @@ var SaveMedia = require('../middlewares/save-media');
 
 var saveForm = require('../controllers/save-form-github');
 var getFormlist = require('../controllers/get-formlist-github');
+var getForm = require('../controllers/get-form-github');
 
 function addS3bucket(req, res, next) {
     if (req.params.s3bucket) return next();
@@ -20,6 +21,10 @@ router.use(GithubAuth());
 router.route('/formList')
     .all(OpenRosaHeaders())
     .get(getFormlist);
+
+router.route('/forms/:blob_sha')
+    .get(getForm);
+
 
 router.route('/submission')
     .all(FormSubmissionMiddleware())
