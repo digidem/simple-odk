@@ -18,8 +18,8 @@ function addS3bucket(req, res, next) {
 router.use(GithubAuth());
 
 router.route('/formList')
-    all(OpenRosaHeaders())
-    get(getFormlist);
+    .all(OpenRosaHeaders())
+    .get(getFormlist);
 
 router.route('/submission')
     .all(FormSubmissionMiddleware())
