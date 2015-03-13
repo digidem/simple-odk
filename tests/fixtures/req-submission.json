@@ -1,0 +1,17 @@
+{
+  "submission": {
+    "json": {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [125.6, 10.1]
+      },
+      "properties": {
+        "a": "b"
+      }
+    },
+    "geojson": true,
+    "formId": "abcd",
+    "instanceId": "efgh"
+  }
+}
