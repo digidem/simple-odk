@@ -19,20 +19,17 @@ module.exports = function(req, res, next) {
     }
   };
 
+  if (auth) {
+    options.auth = {
+      user: auth.name,
+      pass: auth.pass
+    };
+  }
+
   debug('Called formList for repo %s auth %s', options.user + '/' + options.repo, auth && auth.name);
 
   getFormUrls(options, function(err, formUrls) {
     if (err) return next(err);
-    var options;
-
-    if (auth) {
-      options = {
-        auth: {
-          user: auth.name,
-          pass: auth.pass
-        }
-      };
-    }
 
     createFormList(formUrls, options, function(err, formlistXml) {
       if (err) return next(err);
