@@ -1,5 +1,6 @@
 var router = require('express').Router({ mergeParams: true });
 var FormSubmissionMiddleware = require('openrosa-form-submission-middleware');
+var OpenRosaHeaders = require('openrosa-request-middleware');
 
 var GithubAuth = require('../middlewares/github-auth-passthrough');
 var ProcessSubmission = require('../middlewares/process-submission');
@@ -16,7 +17,9 @@ function addS3bucket(req, res, next) {
 
 router.use(GithubAuth());
 
-router.get('/formList', getFormlist);
+router.route('/formList')
+    all(OpenRosaHeaders())
+    get(getFormlist);
 
 router.route('/submission')
     .all(FormSubmissionMiddleware())
