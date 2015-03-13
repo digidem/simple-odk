@@ -2,31 +2,40 @@
  * Proxies a request for a formlist to github ensuring it returns the correct
  * content-type headers
  */
-var getCharset = require('charset');
-var request = require('request');
 
-module.exports = function(req, res) {
-    var url = 'https://raw.githubusercontent.com/' +
-                req.params.user + '/' +
-                req.params.repo + '/master/forms/formList';
+var basicAuth = require('basic-auth');
+var createFormList = require('openrosa-formlist');
+// var debug = require('debug')('simple-odk:get-formlist-github');
+var getFormUrls = require('../helpers/get-form-urls-github');
 
-    res.setHeader('content-type', 'text/xml');
-    req.pipe(request(url))
-        .on('response', function(incoming) {
-            // If the upstream server served this file with a specific character
-            // encoding, so should we.
-            var charset = getCharset(incoming.headers['content-type']),
-                type = 'text/xml';
-            if (charset) type += '; charset=' + charset;
+module.exports = function(req, res, next) {
+  var auth = basicAuth(req);
 
-            // We need to correct the content type on proxied formLists from Github, which are served
-            // as text/plain by default, which ODK Collect does not like.
-            incoming.headers['content-type'] = type;
-            res.writeHead(incoming.statusCode, incoming.headers);
-            incoming.pipe(res);
-        })
-        .on('error', function(err) {
-            console.log(err);
-            res.send(500, 'Problem connecting to form server');
-        });
+  var options = {
+    user: req.params.user,
+    repo: req.params.repo,
+    headers: {
+      'User-Agent': 'simple-odk'
+    }
+  };
+
+  getFormUrls(options, function(err, formUrls) {
+    if (err) return next(err);
+    var options;
+
+    if (auth) {
+      options = {
+        auth: {
+          user: auth.name,
+          pass: auth.pass
+        }
+      };
+    }
+
+    createFormList(formUrls, options, function(err, formlistXml) {
+      if (err) return next(err);
+      res.set('content-type', 'text/xml; charset=utf-8');
+      res.status(200).send(formlistXml);
+    });
+  });
 };

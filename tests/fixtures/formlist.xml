@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xforms xmlns="http://openrosa.org/xforms/xformsList">
+<xform>
+  <formId>CascadingSelect</formId>
+  <name>Cascading Select Form</name>
+  <version>2012072302</version>
+  <hash>md5:d4750440f463f31ba1de0b918d3a5582</hash>
+  <downloadUrl>https://api.github.com/repos/digidem-test/xform-test/git/blobs/37d7798da17946f80ad4afe40fdda37a43b1ba96</downloadUrl>
+</xform><xform>
+  <formId>Birds</formId>
+  <name>Birds</name>
+  <version></version>
+  <hash>md5:357c5e3c8ab47e08b40b31869d70f490</hash>
+  <downloadUrl>https://api.github.com/repos/digidem-test/xform-test/git/blobs/701ebb94ffd3ccb362f172444d8123d33c83dd33</downloadUrl>
+</xform><xform>
+  <formId>geo_tagger_v2</formId>
+  <name>Geo Tagger v2</name>
+  <version></version>
+  <hash>md5:54cf4c55662db1d2902a99b7b5b54727</hash>
+  <downloadUrl>https://api.github.com/repos/digidem-test/xform-test/git/blobs/4a1b7d042b77f2d61ff188e31f9c060791fc2b45</downloadUrl>
+</xform><xform>
+  <formId>widgets</formId>
+  <name>Widgets</name>
+  <version></version>
+  <hash>md5:c4373414128370bd9e8affbf9868ffda</hash>
+  <downloadUrl>https://api.github.com/repos/digidem-test/xform-test/git/blobs/d69b40cb87cf60bdc65182bd9be57d9f794b18c1</downloadUrl>
+</xform>
+</xforms>
