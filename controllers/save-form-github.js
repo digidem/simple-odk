@@ -26,7 +26,7 @@ function saveForm(req, res, next) {
     });
 
     var writeOptions = {
-        message: 'Added new form response ' + options.filename,
+        message: 'Added new form response ' + filename,
         branch: options.branch
     };
 
