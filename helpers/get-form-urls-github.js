@@ -22,11 +22,16 @@ function getFormUrls(options, cb) {
 
   var repo = octo.repos(options.user, options.repo);
 
+  debug('getting formlist for repo', options.user + '/' + options.repo);
+
   repo.git.refs('heads/master').fetch(function(err, ref) {
+    debug('got repo master ref');
     if (err) return cb(err);
     repo.git.commits(ref.object.sha).fetch(function(err, commit) {
+      debug('got repo head commit');
       if (err) return cb(err);
       repo.git.trees(commit.tree.sha).fetch(function(err, tree) {
+        debug('got repo top-level tree');
         if (err) return cb(err);
         tree = tree.tree.reduce(function(prev, leaf) {
           if (leaf.path === FORMS_FOLDER && leaf.type === 'tree')
