@@ -1,6 +1,6 @@
 {
   "name": "simple-odk",
-  "version": "1.0.5-dev",
+  "version": "1.0.6-dev",
   "description": "A minimal ODK server for receiving form submissions from a mobile device and saving them as JSON on github",
   "main": "app.js",
   "repository": {
@@ -25,7 +25,7 @@
     "node-expat": "^2.3.7",
     "octokat": "^0.4.7",
     "openrosa-form-submission-middleware": "^1.0.3",
-    "openrosa-formlist": "^1.0.0",
+    "openrosa-formlist": "^1.0.1",
     "openrosa-manifest": "0.0.1",
     "request": "^2.40.0",
     "traverse": "^0.6.6",

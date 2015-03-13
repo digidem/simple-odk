@@ -28,6 +28,7 @@ module.exports = function(req, res, next) {
 
   getFormUrls(options, function(err, formUrls) {
     if (err) return next(err);
+    debug('get form urls', formUrls);
 
     createFormList(formUrls, options, function(err, formlistXml) {
       if (err) return next(err);
