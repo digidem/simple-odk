@@ -5,7 +5,7 @@
 var nodeCache = require('node-cache');
 var uid2 = require('uid2');
 
-var sessionCache = new nodeCache({ stdTTL: 60 })
+var sessionCache = new nodeCache({ stdTTL: 600 })
 
 module.exports = function(req, res, next) {
   if (req.query.token) {
