@@ -33,14 +33,11 @@ function getFormUrls(options, cb) {
       repo.git.trees(commit.tree.sha).fetch(function(err, tree) {
         debug('got repo top-level tree');
         if (err) return cb(err);
-        tree = tree.tree.reduce(function(prev, leaf) {
-          if (leaf.path === FORMS_FOLDER && leaf.type === 'tree') {
-            debug('found form tree', leaf);
-            return leaf;
-          }
-        });
-        if (!tree) return cb(new Error("can't find forms folder"));
-        repo.git.trees(tree.sha + '?recursive=1').fetch(function(err, tree) {
+        var formTree = tree.tree.filter(function(leaf) {
+          return (leaf.path === FORMS_FOLDER && leaf.type === 'tree')
+        })[0];
+        if (!formTree) return cb(new Error("can't find forms folder"));
+        repo.git.trees(formTree.sha + '?recursive=1').fetch(function(err, tree) {
           if (err) return cb(err);
           var formUrls = reduceTree(tree);
           cb(null, formUrls);
