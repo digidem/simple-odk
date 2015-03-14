@@ -34,10 +34,10 @@ function getFormUrls(options, cb) {
         debug('got repo top-level tree');
         if (err) return cb(err);
         tree = tree.tree.reduce(function(prev, leaf) {
+          debug('reading tree', leaf.path);
           if (leaf.path === FORMS_FOLDER && leaf.type === 'tree')
             return leaf;
         });
-        debug('sha for forms folder', tree.sha);
         if (!tree) cb(new Error("can't find forms folder"));
         repo.git.trees(tree.sha + '?recursive=1').fetch(function(err, tree) {
           if (err) return cb(err);
