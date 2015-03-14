@@ -51,7 +51,7 @@ function getFormUrls(options, cb) {
   function reduceTree(tree) {
     return tree.tree.reduce(function(arr, leaf) {
       if (!/\.xml$/.test(leaf.path) || leaf.type !== 'blob') return arr;
-      arr.push(options.baseUrl + '/' + leaf.sha);
+      arr.push(options.baseUrl + '/' + leaf.sha + '?token=' + options.token);
       return arr;
     }, []);
   }

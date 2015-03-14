@@ -17,7 +17,8 @@ module.exports = function(req, res, next) {
     headers: {
       'User-Agent': 'simple-odk'
     },
-    baseUrl: req.protocol + '://' + req.headers.host + req.baseUrl + '/forms'
+    baseUrl: req.protocol + '://' + req.headers.host + req.baseUrl + '/forms',
+    token: req.sessionToken
   };
 
   if (auth) {
