@@ -38,6 +38,7 @@
     "xtend": "^4.0.0"
   },
   "devDependencies": {
+    "dokku-toolbelt": "0.0.5",
     "dotenv": "^0.5.1",
     "ngrok": "^0.1.99",
     "proxyquire": "^1.4.0",
@@ -47,7 +48,8 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "tape tests/**/*.test.js | tap-spec"
+    "test": "tape tests/**/*.test.js | tap-spec",
+    "config": "CONFIG=$(<domain-config.json) && dt config:set DOMAIN_CONFIG=\"'$CONFIG'\""
   },
   "bugs": {
     "url": "https://github.com/digidem/simple-odk/issues"
