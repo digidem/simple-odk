@@ -11,6 +11,11 @@ var saveForm = require('../controllers/save-form-github');
 var getFormlist = require('../controllers/get-formlist-github');
 var getForm = require('../controllers/get-form-github');
 
+/**
+ * Tiny middleware to add an s3 bucket name of the form simple-odk.user.repo
+ * AWS user arn:aws:iam::018729244327:user/simple-odk will need `s3:PutObject` and
+ * `s3:PutObjectAcl` permissions for the bucket
+ */
 function addS3bucket(req, res, next) {
     if (req.params.s3bucket) return next();
     req.params.s3bucket = [process.env.APP_NAME, req.params.user, req.params.repo].join('.');
