@@ -1,11 +1,12 @@
-// Stores authorization header in a memory store under unique key.
-// We need to do this because ODK Collect with not auth against form
-// downloadUrls, so we need to attach a temporary token
+/**
+ * Stores authorization header in a memory store under unique key.
+ * Not currently used.
+ */
 
 var nodeCache = require('node-cache');
 var uid2 = require('uid2');
 
-var sessionCache = new nodeCache({ stdTTL: 600 })
+var sessionCache = new nodeCache({ stdTTL: 600 });
 
 module.exports = function(req, res, next) {
   if (req.query.token) {
@@ -16,19 +17,19 @@ module.exports = function(req, res, next) {
         err.status = 403;
         next(err);
       }
-      req.headers['authorization'] = value[req.query.token];
-      next()
-    })
-  } else if (req.headers['authorization']) {
+      req.headers.authorization = value[req.query.token];
+      next();
+    });
+  } else if (req.headers.authorization) {
     uid2(64, function(err, uid) {
       if (err) return next();
-      sessionCache.set(uid, req.headers['authorization'], function(err, success) {
+      sessionCache.set(uid, req.headers.authorization, function(err, success) {
         if (err || !success) return next();
         req.sessionToken = uid;
-        next()
+        next();
       });
     });
   } else {
-    next()
+    next();
   }
-}
+};

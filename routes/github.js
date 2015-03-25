@@ -22,15 +22,13 @@ function addS3bucket(req, res, next) {
     next();
 }
 
-router.route('/forms/:blob_sha')
-    .all(sessionAuth)
-    .get(getForm);
-
 router.use(GithubAuth());
+
+router.route('/forms/:blob_sha')
+    .get(getForm);
 
 router.route('/formList')
     .all(OpenRosaHeaders())
-    .all(sessionAuth)
     .get(getFormlist);
 
 router.route('/submission')

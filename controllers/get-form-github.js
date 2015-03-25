@@ -16,7 +16,7 @@ module.exports = function(req, res) {
     options.auth = {
       user: auth.name,
       pass: auth.pass
-    }
+    };
   }
 
   var formUrl = 'https://api.github.com/repos/' + req.params.user + '/' +
@@ -39,4 +39,4 @@ module.exports = function(req, res) {
       console.log(err);
       res.statusCode(500).send('Problem connecting to form server');
   });
-}
+};

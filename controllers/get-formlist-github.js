@@ -19,7 +19,6 @@ module.exports = function(req, res, next) {
       'User-Agent': 'simple-odk'
     },
     baseUrl: protocol + '://' + req.headers.host + req.baseUrl + '/forms',
-    token: req.sessionToken
   };
 
   if (auth) {
@@ -33,7 +32,12 @@ module.exports = function(req, res, next) {
     if (err) return next(err);
     debug('get form urls', formUrls);
 
-    createFormList(formUrls, options, function(err, formlistXml) {
+    var formlistOptions = {
+      headers: options.headers,
+      auth: options.auth
+    };
+
+    createFormList(formUrls, formlistOptions, function(err, formlistXml) {
       if (err) return next(err);
       res.set('content-type', 'text/xml; charset=utf-8');
       res.status(200).send(formlistXml);
