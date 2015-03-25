@@ -36,7 +36,7 @@ var domainConfig;
 if (process.env.DOMAIN_CONFIG) {
     domainConfig = JSON.parse(process.env.DOMAIN_CONFIG);
 } else {
-    domainConfig = require('./domain-config');
+    domainConfig = require('../domain-config');
 }
 
 // Set up a route for each domain
