@@ -50,7 +50,7 @@
   },
   "scripts": {
     "start": "env $(cat .env | xargs) node server.js",
-    "test": "tape tests/**/*.test.js | tap-spec",
+    "test": "standard && tape tests/**/*.test.js | tap-spec",
     "config": "CONFIG=$(<domain-config.json) && dt config:set DOMAIN_CONFIG=\"'$CONFIG'\""
   },
   "bugs": {

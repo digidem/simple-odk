@@ -1,8 +1,8 @@
-var test = require('tape');
-var dotenv = require('dotenv');
-var getFormUrls = require('../../helpers/get-form-urls-github.js');
+var test = require('tape')
+var dotenv = require('dotenv')
+var getFormUrls = require('../../helpers/get-form-urls-github.js')
 
-dotenv.load();
+dotenv.load()
 
 var options = {
   user: 'digidem-test',
@@ -14,13 +14,13 @@ var options = {
     name: process.env.GITHUB_TOKEN,
     pass: 'x-oauth-basic'
   }
-};
+}
 
-test('Returns expected list of urls from Github repo', function(t) {
-  var expectedUrls = require('../fixtures/formlist-github').array;
-  getFormUrls(options, function(err, urls) {
-    t.error(err, 'does not throw err');
-    t.deepEqual(urls, expectedUrls, 'returned array matches fixture');
-    t.end();
-  });
-});
+test('Returns expected list of urls from Github repo', function (t) {
+  var expectedUrls = require('../fixtures/formlist-github').array
+  getFormUrls(options, function (err, urls) {
+    t.error(err, 'does not throw err')
+    t.deepEqual(urls, expectedUrls, 'returned array matches fixture')
+    t.end()
+  })
+})

@@ -1,4 +1,4 @@
-var traverse = require('traverse');
+var traverse = require('traverse')
 
 /**
  * Update references to media files in an xform to include a url to the file
@@ -7,14 +7,14 @@ var traverse = require('traverse');
  * @param  {Object} form A json representation of an xform
  * @param  {Object} file Properties `originalFilename` and `url`
  */
-function updateFileRef(form, file) {
-    traverse(form).forEach(function(value) {
-        if (file.originalFilename !== value) return;
-        this.update({
-            url: file.url,
-            originalFilename: file.originalFilename
-        }, true);
-    });
+function updateFileRef (form, file) {
+  traverse(form).forEach(function (value) {
+    if (file.originalFilename !== value) return
+    this.update({
+      url: file.url,
+      originalFilename: file.originalFilename
+    }, true)
+  })
 }
 
-module.exports = updateFileRef;
+module.exports = updateFileRef
