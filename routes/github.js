@@ -5,7 +5,6 @@ var OpenRosaHeaders = require('openrosa-request-middleware');
 var GithubAuth = require('../middlewares/github-auth-passthrough');
 var ProcessSubmission = require('../middlewares/process-submission');
 var SaveMedia = require('../middlewares/save-media');
-var sessionAuth = require('../middlewares/session-auth');
 
 var saveForm = require('../controllers/save-form-github');
 var getFormlist = require('../controllers/get-formlist-github');

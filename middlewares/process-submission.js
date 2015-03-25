@@ -1,6 +1,3 @@
-// Converts form xml to json, adds meta data, attaches data
-// to req.submission
-
 var xform2json = require('xform-to-json');
 var extend = require('xtend');
 var debug = require('debug')('simple-odk:process-submission');
@@ -9,6 +6,10 @@ var defaults = {
     geojson: true,
 };
 
+/**
+ * Converts form xml in `req.body` to json, adds meta data, attaches data to
+ * `req.submission`
+ */
 function ProcessSubmission(options) {
     return function(req, res, next) {
         if (!req.body.length)

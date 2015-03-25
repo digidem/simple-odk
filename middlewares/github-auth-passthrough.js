@@ -1,13 +1,13 @@
-// Middleware to passthrough auth to Github
 var auth = require('basic-auth');
 var request = require('request');
 
-var appName = process.env.APP_NAME || "SimpleODK";
-
 request = request.defaults({
-    headers: { "User-Agent": appName }
+    headers: { "User-Agent": "simple-odk" }
 });
 
+/**
+ * Middleware to authenticate against Github using Basic Auth.
+ */
 function GithubAuth() {
     return function(req, res, next) {
         var user = auth(req);
@@ -28,7 +28,7 @@ function GithubAuth() {
 
         function unauthorized() {
             res.statusCode = 401;
-            res.setHeader('WWW-Authenticate', 'Basic realm="' + appName + '"');
+            res.setHeader('WWW-Authenticate', 'Basic realm=simple-odk');
             res.send('Unauthorized');
         }
     };

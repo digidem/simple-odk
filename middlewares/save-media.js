@@ -1,11 +1,3 @@
-/**
- * The form submission middleware saves the files to `tmp` and attaches
- * a `files` object to `req`, with properties `file.path`, `file.headers` and
- * `file.size` see https://github.com/andrewrk/node-multiparty/#file-name-file
- *
- * This middleware saves each file to the chosen storage.
- */
-
 var extend = require('xtend');
 var fs = require('fs');
 var debug = require('debug')('simple-odk:save-media');
@@ -17,6 +9,13 @@ var defaults = {
     store: process.env.MEDIA_STORE || 's3'
 };
 
+/**
+ * openrosa-form-submission middleware saves the files to `tmp` and attaches
+ * a `files` object to `req`, with properties `file.path`, `file.headers` and
+ * `file.size` see https://github.com/andrewrk/node-multiparty/#file-name-file
+ *
+ * This middleware saves each file to the chosen storage.
+ */
 function SaveMedia(options) {
     var store;
 

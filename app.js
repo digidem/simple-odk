@@ -10,7 +10,7 @@ var error    = require('./controllers/error-handler');
 var app = express();
 
 app.get('/', function(req, res) {
-    res.send('ODK Server ready to receive submissions');
+    res.send('Simple ODK Server ready to receive submissions');
 });
 
 app.use('/', defaultRoutes);

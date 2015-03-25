@@ -1,9 +1,10 @@
-// Middleware to passthrough auth to Firebase
 var auth = require('basic-auth');
 var Firebase = require('firebase');
 
-var appName = process.env.APP_NAME || 'SimpleODK';
-
+/**
+ * Middleware to authenticate to Firebase with Basic Auth. Attaches the
+ * authenticated Firebase ref to the req object
+ */
 function FirebaseAuth() {
     return function(req, res, next) {
         var user = auth(req);
@@ -26,7 +27,7 @@ function FirebaseAuth() {
 
         function unauthorized() {
             res.statusCode = 401;
-            res.setHeader('WWW-Authenticate', 'Basic realm="' + appName + '"');
+            res.setHeader('WWW-Authenticate', 'Basic realm=simple-odk');
             res.send('Unauthorized');
         }
     };

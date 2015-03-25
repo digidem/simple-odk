@@ -1,13 +1,12 @@
-/**
- * Stores authorization header in a memory store under unique key.
- * Not currently used.
- */
-
 var nodeCache = require('node-cache');
 var uid2 = require('uid2');
 
 var sessionCache = new nodeCache({ stdTTL: 600 });
 
+/**
+ * Stores authorization header in a memory store under unique key.
+ * Not currently used.
+ */
 module.exports = function(req, res, next) {
   if (req.query.token) {
     sessionCache.get(req.query.token, function(err, value) {

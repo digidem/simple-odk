@@ -1,13 +1,12 @@
-/**
- * Proxies a request for a formlist to github ensuring it returns the correct
- * content-type headers
- */
-
 var basicAuth = require('basic-auth');
 var createFormList = require('openrosa-formlist');
 var debug = require('debug')('simple-odk:get-formlist-github');
 var getFormUrls = require('../helpers/get-form-urls-github');
 
+/**
+ * Searches for xml form files on Github and returns a valid
+ * OpenRosa formList xml.
+ */
 module.exports = function(req, res, next) {
   var auth = basicAuth(req);
   var protocol = req.hostname === 'localhost' ? 'http' : 'https';
@@ -26,7 +25,7 @@ module.exports = function(req, res, next) {
     options.auth.user = auth.name;
   }
 
-  debug('Called formList for repo %s auth %s', options.user + '/' + options.repo, auth && auth.name);
+  debug('Called formList for repo %s auth %s', options.user + '/' + options.repo);
 
   getFormUrls(options, function(err, formUrls) {
     if (err) return next(err);

@@ -3,10 +3,11 @@
 var fs = require('fs');
 var path = require('path');
 var mkdirp = require('mkdirp');
+var stream = require('stream');
 
 module.exports = function(data, options, callback) {
-    filename = options.filesystem.path + options.filename;
-    mkdirp(path.dirname(filename), function(err, made) {
+    var filename = options.filesystem.path + options.filename;
+    mkdirp(path.dirname(filename), function(err) {
         if (err) console.log(err);
         if (data instanceof stream.Readable) {
             var fileStream = fs.createWriteStream(filename);

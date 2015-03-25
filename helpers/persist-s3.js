@@ -2,9 +2,22 @@
 
 var knox = require('knox');
 var stream = require('stream');
+var mime = require('mime-types');
 var debug = require('debug')('simple-odk:persist-s3');
 
+/**
+ * Writes a file to Amazon S3
+ * @param  {Stream|String|Buffer}   data     The file to write to Amazon S3
+ * @param  {Object}   options  Required: `options.s3bucket` a valid S3 bucket name,
+ * `options.file.size` filesize in bytes, needed by S3
+ * @param  {Function} callback
+ */
 module.exports = function(data, options, callback) {
+
+    if (!options.s3bucket) return callback(new Error('Need options.s3bucket'));
+    if (!options.file) return callback(new Error('Need options.file'));
+    if (!options.file.size) return callback(new Error('Need options.file.size'));
+    if (!options.file.filename) return callback(new Error('Need options.file.filename'));
 
     var s3Client = knox.createClient({
         key: options.s3key || process.env.S3_KEY,
@@ -14,15 +27,15 @@ module.exports = function(data, options, callback) {
 
     var headers = {
         "content-length": options.file.size,
-        "content-type": options.file.headers['content-type']
+        "content-type": options.file.headers['content-type'] || mime.lookup(options.filename)
     };
 
     var req = s3Client.put(options.filename, headers);
 
     req.on('error', callback);
 
-    req.on('progress', function(w, t, p) {
-        debug("uploading...", w, t, p);
+    req.on('progress', function(w, t) {
+        debug("uploading... %s of %s", w, t);
     });
 
     req.on('response', function(res) {

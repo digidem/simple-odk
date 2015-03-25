@@ -2,6 +2,10 @@ var basicAuth = require('basic-auth');
 var getCharset = require('charset');
 var request = require('request');
 
+/**
+ * A simple proxy for forms stored in Github, passes through Basic Auth and
+ * adds appropriate content-type headers
+ */
 module.exports = function(req, res) {
   var auth = basicAuth(req);
 
