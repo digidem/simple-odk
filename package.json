@@ -47,7 +47,7 @@
     "tape": "^3.5.0"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "env $(cat .env | xargs) node server.js",
     "test": "tape tests/**/*.test.js | tap-spec",
     "config": "CONFIG=$(<domain-config.json) && dt config:set DOMAIN_CONFIG=\"'$CONFIG'\""
   },
