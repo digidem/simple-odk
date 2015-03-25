@@ -1,6 +1,6 @@
 var express = require('express')
 
-var defaultRoutes = require('./routes/default-routes')
+var vhosts = require('./routes/vhosts')
 var github = require('./routes/github')
 var firebase = require('./routes/firebase')
 var gist = require('./routes/gist')
@@ -13,7 +13,7 @@ app.get('/', function (req, res) {
   res.send('Simple ODK Server ready to receive submissions')
 })
 
-app.use('/', defaultRoutes)
+app.use('/', vhosts)
 
 app.use('/gh/:user/:repo', github)
 
