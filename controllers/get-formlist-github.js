@@ -14,26 +14,25 @@ module.exports = function (req, res, next) {
   var options = {
     user: req.params.user,
     repo: req.params.repo,
+    auth: auth || {},
     headers: {
       'User-Agent': 'simple-odk'
     },
     baseUrl: protocol + '://' + req.headers.host + req.baseUrl + '/forms'
   }
 
-  if (auth) {
-    options.auth = auth
-    options.auth.user = auth.name
-  }
-
   debug('Called formList for repo %s auth %s', options.user + '/' + options.repo)
 
   getFormUrls(options, function (err, formUrls) {
     if (err) return next(err)
-    debug('get form urls', formUrls)
+    debug('got form urls', formUrls)
 
     var formlistOptions = {
       headers: options.headers,
-      auth: options.auth
+      auth: {
+        name: options.auth.name,
+        pass: options.auth.pass
+      }
     }
 
     createFormList(formUrls, formlistOptions, function (err, formlistXml) {
