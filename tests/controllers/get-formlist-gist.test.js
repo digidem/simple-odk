@@ -28,8 +28,8 @@ var stubs = {
     return {
       gists: function () {
         return {
-          read: function (callback) {
-            callback(null, JSON.stringify(require('../fixtures/test-gist')))
+          fetch: function (callback) {
+            callback(null, require('../fixtures/test-gist'))
           }
         }
       }
@@ -43,6 +43,7 @@ app.get('/', mockReq, getFormlist)
 
 test('Request to formlist returns valid content-type', function (t) {
   request(app).get('/')
+    .set('Host', 'example.com')
     .auth(auth.name, auth.pass)
     .expect('content-type', 'text/xml; charset=utf-8')
     .end(t.end)
@@ -50,6 +51,7 @@ test('Request to formlist returns valid content-type', function (t) {
 
 test('Request to formlist returns expected formlist Xml', function (t) {
   request(app).get('/')
+    .set('Host', 'example.com')
     .auth(auth.name, auth.pass)
     .expect(200, formlistXml)
     .end(t.end)

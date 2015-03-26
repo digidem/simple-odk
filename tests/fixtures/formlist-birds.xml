@@ -4,6 +4,6 @@
     <name>Birds</name>
     <formID>Birds</formID>
     <hash>md5:357c5e3c8ab47e08b40b31869d70f490</hash>
-    <downloadUrl>https://gist.githubusercontent.com/digidem-test/0e068989680d7646ecfd/raw/701ebb94ffd3ccb362f172444d8123d33c83dd33/birds.xml</downloadUrl>
+    <downloadUrl>https://example.com/forms?url=https://gist.githubusercontent.com/digidem-test/0e068989680d7646ecfd/raw/701ebb94ffd3ccb362f172444d8123d33c83dd33/birds.xml</downloadUrl>
   </xform>
 </xforms>

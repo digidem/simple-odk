@@ -21,6 +21,7 @@ var stubs = {
       t.equal(options.user, 'digidem-test')
       t.equal(options.repo, 'xform-test')
       t.equal(options.headers['User-Agent'], 'simple-odk')
+      t.equal(options.baseUrl, 'https://example.com/forms')
       t.end()
     })
     callback(null, formUrls)
@@ -36,12 +37,14 @@ app.get('/', mockReq, getFormlist)
 
 test('Request to formlist returns valid content-type', function (t) {
   request(app).get('/')
+    .set('Host', 'example.com')
     .expect('content-type', 'text/xml; charset=utf-8')
     .end(t.end)
 })
 
 test('Request to formlist returns expected formlist Xml', function (t) {
   request(app).get('/')
+    .set('Host', 'example.com')
     .expect(200, formlistXml)
     .end(t.end)
 })
