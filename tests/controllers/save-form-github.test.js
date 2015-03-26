@@ -41,10 +41,9 @@ var saveForm = proxyquire('../../controllers/save-form-github', stubs)
 
 app.get('/', mockReq, saveForm)
 
-test('description', function (t) {
+test('Returns status 201', function (t) {
   request(app)
     .get('/')
     .auth('test', 'test')
-    .expect(201, '')
-    .end(t.end)
+    .expect(201, t.end)
 })
