@@ -1,4 +1,4 @@
 node_modules
-domain-config.json
+vhost-config.json
+alias-config.json
 .env
-.sublimelinterrc

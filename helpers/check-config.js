@@ -6,7 +6,7 @@ module.exports = function (config) {
       if (!config.repo || !config.user) {
         throw new Error('You must provide `githubRepo` and `githubUser` in domain config')
       } else {
-        debug('using Github repo %s for %s', config.githubUser + '/' + config.githubRepo)
+        debug('using Github repo %s for %s', config.user + '/' + config.repo)
       }
       break
 
