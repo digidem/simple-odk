@@ -25,7 +25,11 @@ function saveForm (req, res, next) {
         features: []
       }
     } else {
-      featureCollection = JSON.parse(data)
+      try {
+        featureCollection = JSON.parse(data)
+      } catch (e) {
+        return next(new Error('Cannot parse gist json'))
+      }
     }
     featureCollection.features.push(submission.json)
     gistfs.writeFile(filename, JSON.stringify(featureCollection, null, '  '), function (err) {
