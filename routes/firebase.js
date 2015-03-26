@@ -5,7 +5,7 @@ var FirebaseAuth = require('../middlewares/firebase-auth')
 var ProcessSubmission = require('../middlewares/process-submission')
 var SaveMedia = require('../middlewares/save-media')
 
-var saveForm = require('../controllers/save-form-firebase')
+var saveForm = require('../controllers/firebase/save-form-firebase')
 
 /**
  * Tiny middleware to add an s3 bucket name of the form simple-odk.firebaseappname

@@ -1,7 +1,7 @@
 var basicAuth = require('basic-auth')
 var createFormList = require('openrosa-formlist')
 var debug = require('debug')('simple-odk:get-formlist-github')
-var getFormUrls = require('../helpers/get-form-urls-github')
+var getFormUrls = require('../../helpers/get-form-urls-github')
 
 /**
  * Searches for xml form files on Github and returns a valid

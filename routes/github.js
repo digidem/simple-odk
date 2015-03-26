@@ -6,9 +6,9 @@ var GithubAuth = require('../middlewares/github-auth-passthrough')
 var ProcessSubmission = require('../middlewares/process-submission')
 var SaveMedia = require('../middlewares/save-media')
 
-var saveForm = require('../controllers/save-form-github')
-var getFormlist = require('../controllers/get-formlist-github')
-var getForm = require('../controllers/get-form-github')
+var saveForm = require('../controllers/github/save-form-github')
+var getFormlist = require('../controllers/github/get-formlist-github')
+var getForm = require('../controllers/github/get-form-github')
 
 /**
  * Tiny middleware to add an s3 bucket name of the form simple-odk.user.repo

@@ -6,9 +6,9 @@ var GithubAuth = require('../middlewares/github-auth-passthrough')
 var ProcessSubmission = require('../middlewares/process-submission')
 var SaveMedia = require('../middlewares/save-media')
 
-var saveForm = require('../controllers/save-form-gist')
-var getForm = require('../controllers/get-form-gist')
-var getFormlist = require('../controllers/get-formlist-gist')
+var saveForm = require('../controllers/gist/save-form-gist')
+var getForm = require('../controllers/gist/get-form-gist')
+var getFormlist = require('../controllers/gist/get-formlist-gist')
 
 /**
  * Tiny middleware to add an s3 bucket name of the form simple-odk.gist_id

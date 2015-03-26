@@ -1,5 +1,5 @@
 var basicAuth = require('basic-auth')
-var proxy = require('../helpers/proxy-content-type')
+var proxy = require('../../helpers/proxy-content-type')
 
 /**
  * A simple proxy for forms stored in Github, passes through Basic Auth and

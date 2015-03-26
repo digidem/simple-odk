@@ -1,4 +1,4 @@
-var proxy = require('../helpers/proxy-content-type')
+var proxy = require('../../helpers/proxy-content-type')
 
 /**
  * A simple proxy for forms stored in gist,

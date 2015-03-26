@@ -37,7 +37,7 @@ var stubs = {
   }
 }
 
-var getFormlist = proxyquire('../../controllers/get-formlist-gist', stubs)
+var getFormlist = proxyquire('../../controllers/gist/get-formlist-gist', stubs)
 
 app.get('/', mockReq, getFormlist)
 

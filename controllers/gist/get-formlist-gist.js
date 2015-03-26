@@ -10,14 +10,15 @@ var Octokat = require('octokat')
  */
 module.exports = function (req, res, next) {
   var user = basicAuth(req)
+  var protocol = req.hostname === 'localhost' ? 'http' : 'https'
+  var baseUrl = protocol + '://' + req.headers.host + req.baseUrl + '/forms'
 
   var octo = new Octokat({
     username: user.name,
     password: user.pass
   })
 
-  octo.gists(req.params.gist_id).read(function (err, data) {
-    data = JSON.parse(data)
+  octo.gists(req.params.gist_id).fetch(function (err, data) {
     if (err) return next(err)
     var isXml
     var formStream
@@ -29,7 +30,7 @@ module.exports = function (req, res, next) {
       if (isXml) {
         formStream = resumer().queue(files[filename].content).end()
         formStream.uri = {
-          href: files[filename].raw_url
+          href: baseUrl + '?url=' + files[filename].raw.url
         }
         formStreams.push(formStream)
       }

@@ -37,7 +37,7 @@ var stubs = {
   }
 }
 
-var saveForm = proxyquire('../../controllers/save-form-github', stubs)
+var saveForm = proxyquire('../../controllers/github/save-form-github', stubs)
 
 app.get('/', mockReq, saveForm)
 

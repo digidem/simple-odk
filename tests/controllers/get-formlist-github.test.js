@@ -16,7 +16,7 @@ var formUrls = require('../fixtures/formlist-github').array
 var formlistXml = fs.readFileSync(__dirname + '/../fixtures/formlist.xml').toString().trim()
 
 var stubs = {
-  '../helpers/get-form-urls-github': function (options, callback) {
+  '../../helpers/get-form-urls-github': function (options, callback) {
     test('Calls formlist with the correct options', function (t) {
       t.equal(options.user, 'digidem-test')
       t.equal(options.repo, 'xform-test')
@@ -30,7 +30,7 @@ var stubs = {
   }
 }
 
-var getFormlist = proxyquire('../../controllers/get-formlist-github', stubs)
+var getFormlist = proxyquire('../../controllers/github/get-formlist-github', stubs)
 
 app.get('/', mockReq, getFormlist)
 

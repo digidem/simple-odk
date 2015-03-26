@@ -7,13 +7,13 @@ var extend = require('xtend/mutable')
 var app = express()
 
 var stubs = {
-  '../helpers/proxy-content-type': function (url, res, options) {
+  '../../helpers/proxy-content-type': function (url, res, options) {
     res.set('content-type', options.contentType)
     res.send(url)
   }
 }
 
-var getForm = proxyquire('../../controllers/get-form-github', stubs)
+var getForm = proxyquire('../../controllers/github/get-form-github', stubs)
 
 // Mock the req
 function mockReq (req, res, next) {
