@@ -1,8 +1,8 @@
 {
     "array": [
-        "https://api.github.com/repos/digidem-test/xform-test/git/blobs/37d7798da17946f80ad4afe40fdda37a43b1ba96",
-        "https://api.github.com/repos/digidem-test/xform-test/git/blobs/701ebb94ffd3ccb362f172444d8123d33c83dd33",
-        "https://api.github.com/repos/digidem-test/xform-test/git/blobs/4a1b7d042b77f2d61ff188e31f9c060791fc2b45",
-        "https://api.github.com/repos/digidem-test/xform-test/git/blobs/d69b40cb87cf60bdc65182bd9be57d9f794b18c1"
+        "https://example.com/forms/37d7798da17946f80ad4afe40fdda37a43b1ba96",
+        "https://example.com/forms/701ebb94ffd3ccb362f172444d8123d33c83dd33",
+        "https://example.com/forms/4a1b7d042b77f2d61ff188e31f9c060791fc2b45",
+        "https://example.com/forms/d69b40cb87cf60bdc65182bd9be57d9f794b18c1"
     ]
 }

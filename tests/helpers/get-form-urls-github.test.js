@@ -13,7 +13,8 @@ var options = {
   auth: {
     name: process.env.GITHUB_TOKEN,
     pass: 'x-oauth-basic'
-  }
+  },
+  baseUrl: 'https://example.com/forms'
 }
 
 test('Returns expected list of urls from Github repo', function (t) {
