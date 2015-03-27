@@ -25,10 +25,10 @@ function GithubAuth () {
     // We use a blake2b hash of the authoriation header to cache auth
     // details, as a little added security that avoids user passwords
     // being accessed from the cache store
-    avon.blake2b(req.headers.authorization, function (err, buffer) {
+    avon.blake2b(new Buffer(req.headers.authorization), function (err, buff) {
       if (err) return next(err)
 
-      var hash = buffer.toString('hex')
+      var hash = buff.toString('hex')
 
       // Check if we have already checked this user/pass
       // Authorization will always be handled by the Github API,
