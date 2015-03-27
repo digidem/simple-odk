@@ -38,7 +38,9 @@ var vhostConfig
 // Read domain config from a file if the environment variable is not set
 // (used for local testing)
 if (process.env.VHOSTS) {
-  vhostConfig = JSON.parse(process.env.VHOSTS)
+  // TODO: This is a hack to work around escaped strings problems
+  // stored in env variables. May cause problems in the future, look out!
+  vhostConfig = JSON.parse(process.env.VHOSTS.replace(/\\/g, ''))
 } else {
   vhostConfig = require('../vhost-config')
 }

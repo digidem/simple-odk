@@ -34,7 +34,9 @@ var aliasConfig
 // Read domain config from a file if the environment variable is not set
 // (used for local testing)
 if (process.env.ALIASES) {
-  aliasConfig = JSON.parse(process.env.ALIASES)
+  // TODO: This is a hack to work around escaped strings problems
+  // stored in env variables. May cause problems in the future, look out!
+  aliasConfig = JSON.parse(process.env.ALIASES.replace(/\\/g, ''))
 } else {
   aliasConfig = require('../alias-config')
 }
