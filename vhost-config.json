@@ -1,14 +1,14 @@
 {
   "corpiaa.digital-democracy.org": {
     "formStore": "github",
-    "githubUser": "digidem",
-    "githubRepo": "veeduria-data",
+    "user": "digidem",
+    "repo": "veeduria-data",
     "s3Bucket": "odk-images.digital-democracy.org"
   },
   "odk.wapichanao.org": {
     "formStore": "github",
-    "githubUser": "digidem",
-    "githubRepo": "wapichanao-data",
+    "user": "digidem",
+    "repo": "wapichanao-data",
     "s3Bucket": "images.wapichanao.org"
   }
 }

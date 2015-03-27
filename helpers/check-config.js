@@ -4,7 +4,7 @@ module.exports = function (config) {
   switch (config.formStore) {
     case 'github':
       if (!config.repo || !config.user) {
-        throw new Error('You must provide `githubRepo` and `githubUser` in domain config')
+        throw new Error('You must provide `repo` and `user` in domain config')
       } else {
         debug('using Github repo %s for %s', config.user + '/' + config.repo)
       }

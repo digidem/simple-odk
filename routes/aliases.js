@@ -36,9 +36,19 @@ var aliasConfig
 if (process.env.ALIASES) {
   // TODO: This is a hack to work around escaped strings problems
   // stored in env variables. May cause problems in the future, look out!
-  aliasConfig = JSON.parse(process.env.ALIASES.replace(/\\/g, ''))
+  try {
+    aliasConfig = JSON.parse(process.env.VHOSTS.replace(/\\/g, ''))
+  } catch (e) {
+    console.error('Problem parsing ALIASES env variable', e.message)
+    aliasConfig = {}
+  }
 } else {
-  aliasConfig = require('../alias-config')
+  try {
+    aliasConfig = require('../alias-config')
+  } catch (e) {
+    console.log('No valid alias config found')
+    aliasConfig = {}
+  }
 }
 
 // Set up a route for each domain

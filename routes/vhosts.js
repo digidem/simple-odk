@@ -40,9 +40,19 @@ var vhostConfig
 if (process.env.VHOSTS) {
   // TODO: This is a hack to work around escaped strings problems
   // stored in env variables. May cause problems in the future, look out!
-  vhostConfig = JSON.parse(process.env.VHOSTS.replace(/\\/g, ''))
+  try {
+    vhostConfig = JSON.parse(process.env.VHOSTS.replace(/\\/g, ''))
+  } catch (e) {
+    console.error('Problem parsing VHOST env variable', e.message)
+    vhostConfig = {}
+  }
 } else {
-  vhostConfig = require('../vhost-config')
+  try {
+    vhostConfig = require('../vhost-config')
+  } catch (e) {
+    console.log('No valid vhost config found')
+    vhostConfig = {}
+  }
 }
 
 // Set up a route for each domain
