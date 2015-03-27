@@ -1,5 +1,6 @@
 var basicAuth = require('basic-auth')
 var request = require('request')
+var debug = require('debug')('simple-odk:github-auth')
 var NodeCache = require('node-cache')
 var avon = require('avon')
 
@@ -22,6 +23,8 @@ function GithubAuth () {
 
     if (auth === undefined) return unauthorized()
 
+    debug('checking github auth')
+
     // We use a blake2b hash of the authoriation header to cache auth
     // details, as a little added security that avoids user passwords
     // being accessed from the cache store
@@ -35,8 +38,12 @@ function GithubAuth () {
       // this just caches our check which initially forces ODK collect
       // to send and Authorization header
       authCache.get(hash, function (err, value) {
-        if (!err & value[hash]) return next()
+        if (!err & value[hash]) {
+          debug('user auth cached, authorized')
+          return next()
+        }
 
+        debug('authorizing against api.github.com/user')
         request
           .get('https://api.github.com/user')
           .auth(auth.name, auth.pass, true)
@@ -55,6 +62,7 @@ function GithubAuth () {
     function authorized (hash) {
       // Cache the authorization in memory for 5 mins
       authCache.set(hash, true)
+      debug('user authorized')
       next()
     }
 

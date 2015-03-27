@@ -28,6 +28,7 @@
     "knox": "^0.9.2",
     "mime-types": "^2.0.10",
     "mkdirp": "^0.5.0",
+    "morgan": "^1.5.2",
     "node-cache": "^1.1.0",
     "node-expat": "^2.3.7",
     "octokat": "^0.4.7",

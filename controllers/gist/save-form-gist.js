@@ -24,9 +24,11 @@ function saveForm (req, res, next) {
         type: 'FeatureCollection',
         features: []
       }
+      debug('creating new geojson feature collection', filename)
     } else {
       try {
         featureCollection = JSON.parse(data)
+        debug('appending to existing feature collection', filename)
       } catch (e) {
         return next(new Error('Cannot parse gist json'))
       }
