@@ -3,6 +3,9 @@
   "version": "1.2.0-dev",
   "description": "A minimal ODK server for receiving form submissions from a mobile device and saving them as JSON on github",
   "main": "app.js",
+  "engines": {
+    "node": "0.10"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/digidem/simple-odk.git"
