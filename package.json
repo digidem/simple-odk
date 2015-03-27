@@ -56,7 +56,7 @@
   "scripts": {
     "start": "env $(cat .env | xargs) node server.js",
     "test": "standard && tape tests/**/*.test.js | tap-spec",
-    "config": "CONFIG=$(<domain-config.json) && dt config:set DOMAIN_CONFIG=\"'$CONFIG'\""
+    "deploy": "bin/deploy.sh"
   },
   "bugs": {
     "url": "https://github.com/digidem/simple-odk/issues"
