@@ -27,11 +27,12 @@ var stubs = {
   }
 }
 
-test('Returns status 201', function (t) {
+test('Creates a new geojson feature collection if none exists in gist', function (t) {
   var app = express()
 
   gistfsStubs = {
     readFile: function (filename, options, callback) {
+      // Stub returns error to simulate file not existing
       callback(new Error())
     },
     writeFile: function (filename, data, callback) {
@@ -41,50 +42,45 @@ test('Returns status 201', function (t) {
           submission.submission.json
         ]
       }
-      test('Calls hubfs.writeFile with correct args', function (t) {
-        t.equal(filename, 'abcd.geojson')
-        t.deepEqual(JSON.parse(data), expected)
-        t.end()
-      })
+      t.equal(filename, 'abcd.geojson', 'filename is correct')
+      t.deepEqual(JSON.parse(data), expected, 'saves correct geojson feature collection')
       callback(null)
     }
   }
 
   var saveForm = proxyquire('../../controllers/gist/save-form-gist', stubs)
 
-  app.get('/', mockReq, saveForm)
+  app.post('/', mockReq, saveForm)
 
   request(app)
-    .get('/')
+    .post('/')
     .auth('test', 'test')
     .expect(201, t.end)
 })
 
-test('Returns status 201', function (t) {
+test('Appends geojson feature to existing feature collection in gist', function (t) {
   var app = express()
 
   gistfsStubs = {
     readFile: function (filename, options, callback) {
+      // Read file returns Feature Collection, reflecting geojson already exists in gist
       callback(null, JSON.stringify(require('../fixtures/single-geojson')))
     },
     writeFile: function (filename, data, callback) {
       var expected = require('../fixtures/single-geojson')
       expected.features.push(submission.submission.json)
-      test('Calls hubfs.writeFile with correct args', function (t) {
-        t.equal(filename, 'abcd.geojson')
-        t.deepEqual(JSON.parse(data), expected)
-        t.end()
-      })
+      t.equal(filename, 'abcd.geojson', 'filename is correct')
+      t.deepEqual(JSON.parse(data), expected, 'updates existing geojson feature collection')
       callback(null)
     }
   }
 
   var saveForm = proxyquire('../../controllers/gist/save-form-gist', stubs)
 
-  app.get('/', mockReq, saveForm)
+  app.post('/', mockReq, saveForm)
 
   request(app)
-    .get('/')
+    .post('/')
     .auth('test', 'test')
     .expect(201, t.end)
 })

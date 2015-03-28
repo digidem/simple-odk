@@ -43,7 +43,7 @@ test('Request to formlist returns expected formlist Xml', function (t) {
 test('Calls internal modules with correct options', function (t) {
   var stubs2 = {
     '../../helpers/get-form-urls-github': function (options, callback) {
-      t.test('Calls getFormUrls with the correct options', function (st) {
+      t.test('- Calls getFormUrls with the correct options', function (st) {
         st.equal(options.user, 'digidem-test')
         st.equal(options.repo, 'xform-test')
         st.equal(options.headers['User-Agent'], 'simple-odk')
@@ -53,7 +53,7 @@ test('Calls internal modules with correct options', function (t) {
       callback(null, formUrls)
     },
     'openrosa-formlist': function (formUrls, options, callback) {
-      t.test('Calls formlist with the correct options', function (st) {
+      t.test('- Calls formlist with the correct options', function (st) {
         st.equal(options.auth.user, 'username')
         st.equal(options.auth.pass, 'password')
         st.deepEqual(options.headers, { 'User-Agent': 'simple-odk' })

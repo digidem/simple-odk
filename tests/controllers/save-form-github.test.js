@@ -15,18 +15,16 @@ function mockReq (req, res, next) {
   next()
 }
 
-// stub out hubfs
-var stubs = {
+test('Calls hubfs.writeFile with correct args', function (t) {
+  // stub out hubfs
+  var stubs = {
   'hubfs.js': function () {
     return {
       writeFile: function (filename, data, options, callback) {
-        test('Calls hubfs.writeFile with correct args', function (t) {
-          t.equal(filename, 'submissions/abcd/efgh.geojson')
-          t.equal(data, JSON.stringify(submission.submission.json, null, '  '))
-          t.equal(options.message, 'Added new form response submissions/abcd/efgh.geojson')
-          t.equal(options.branch, 'master')
-          t.end()
-        })
+        t.equal(filename, 'submissions/abcd/efgh.geojson', 'filename is correct')
+        t.deepEqual(JSON.parse(data), submission.submission.json, 'geojson matches expected')
+        t.equal(options.message, 'Added new form response submissions/abcd/efgh.geojson', 'correct commit message')
+        t.equal(options.branch, 'master', 'writes to correct branch')
         callback(null, {
           filename: filename,
           data: data,
@@ -35,13 +33,12 @@ var stubs = {
       }
     }
   }
-}
+  }
 
-var saveForm = proxyquire('../../controllers/github/save-form-github', stubs)
+  var saveForm = proxyquire('../../controllers/github/save-form-github', stubs)
 
-app.get('/', mockReq, saveForm)
+  app.get('/', mockReq, saveForm)
 
-test('Returns status 201', function (t) {
   request(app)
     .get('/')
     .auth('test', 'test')

@@ -3,8 +3,6 @@ var request = require('supertest')
 var proxyquire = require('proxyquire').noCallThru()
 var express = require('express')
 
-var app = express()
-
 var vhostConfig = {
   'github.example.com': {
     formStore: 'github',
@@ -26,39 +24,31 @@ var vhostConfig = {
 
 process.env.VHOSTS = JSON.stringify(vhostConfig)
 
-var stubs = {
-  './github': express.Router({ mergeParams: true }).get('/', function (req, res, next) {
-    test('github params are set', function (t) {
+function createStubs (t) {
+  return {
+    './github': express.Router({ mergeParams: true }).get('/', function (req, res, next) {
       t.equal(req.params.user, vhostConfig['github.example.com'].user)
       t.equal(req.params.repo, vhostConfig['github.example.com'].repo)
       t.equal(req.params.s3bucket, vhostConfig['github.example.com'].s3bucket)
-      t.end()
-    })
-    res.send('github')
-  }),
-  './gist': express.Router({ mergeParams: true }).get('/', function (req, res, next) {
-    test('gist params are set', function (t) {
+      res.send('github')
+    }),
+    './gist': express.Router({ mergeParams: true }).get('/', function (req, res, next) {
       t.equal(req.params.gist_id, vhostConfig['gist.example.com'].gist_id)
       t.equal(req.params.s3bucket, vhostConfig['gist.example.com'].s3bucket)
-      t.end()
-    })
-    res.send('gist')
-  }),
-  './firebase': express.Router({ mergeParams: true }).get('/', function (req, res, next) {
-    test('firebase params are set', function (t) {
+      res.send('gist')
+    }),
+    './firebase': express.Router({ mergeParams: true }).get('/', function (req, res, next) {
       t.equal(req.params.appname, vhostConfig['fb.example.com'].appname)
       t.equal(req.params.s3bucket, vhostConfig['fb.example.com'].s3bucket)
-      t.end()
+      res.send('firebase')
     })
-    res.send('firebase')
-  })
+  }
 }
 
-var vhosts = proxyquire('../../routes/vhosts', stubs)
-
-app.use('/', vhosts)
-
-test('Routes to Github', function (t) {
+test('Routes to Github passing correct params', function (t) {
+  var app = express()
+  var vhosts = proxyquire('../../routes/vhosts', createStubs(t))
+  app.use('/', vhosts)
   request(app)
     .get('/')
     .set('Host', 'github.example.com')
@@ -66,14 +56,20 @@ test('Routes to Github', function (t) {
     .end(t.end)
 })
 
-test('Routes to Gist', function (t) {
+test('Routes to Gist passing correct params', function (t) {
+  var app = express()
+  var vhosts = proxyquire('../../routes/vhosts', createStubs(t))
+  app.use('/', vhosts)
   request(app)
     .get('/')
     .set('Host', 'gist.example.com')
     .expect(200, 'gist', t.end)
 })
 
-test('Routes to Firebase', function (t) {
+test('Routes to Firebase passing correct params', function (t) {
+  var app = express()
+  var vhosts = proxyquire('../../routes/vhosts', createStubs(t))
+  app.use('/', vhosts)
   request(app)
     .get('/')
     .set('Host', 'fb.example.com')
