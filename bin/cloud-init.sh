@@ -76,7 +76,7 @@ echo 'DOCKER_OPTS="$DOCKER_OPTS --ip=127.0.0.1"' >> /etc/default/docker
 sed -i "s/worker_connections .*/worker_connections $(ulimit -n);/" /etc/nginx/nginx.conf
 
 # setup supervisord to restart process if it fails
-# git clone https://github.com/statianzo/dokku-supervisord.git /var/lib/dokku/plugins/dokku-supervisord
+git clone https://github.com/statianzo/dokku-supervisord.git /var/lib/dokku/plugins/dokku-supervisord
 # plugin for custom nginx config per VHOST
 git clone https://github.com/neam/dokku-nginx-vhosts-custom-configuration.git /var/lib/dokku/plugins/nginx-vhosts-custom-configuration
 # install plugins
