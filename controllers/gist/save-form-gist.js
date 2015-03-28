@@ -37,7 +37,9 @@ function saveForm (req, res, next) {
     gistfs.writeFile(filename, JSON.stringify(featureCollection, null, '  '), function (err) {
       if (err) return next(err)
       debug('saved form response %s to gist %s', filename, req.params.gist_id)
-      res.status(201).end()
+      res.status(201).send({
+        saved: filename
+      })
     })
   })
 }

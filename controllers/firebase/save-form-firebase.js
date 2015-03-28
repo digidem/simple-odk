@@ -12,7 +12,9 @@ function saveForm (req, res, next) {
     .set(submission.json, function (err) {
       if (err) return next(err)
       debug('saved form response %s to firebase', submission.instanceId)
-      res.status(201).end()
+      res.status(201).send({
+        saved: submission.instanceId
+      })
     })
 }
 

@@ -35,7 +35,9 @@ function saveForm (req, res, next) {
   hubfs.writeFile(filename, json, writeOptions, function (err) {
     if (err) return next(err)
     debug('saved form response %s to github repo %s', filename, user + '/' + repo)
-    res.status(201).end()
+    res.status(201).send({
+      saved: filename
+    })
   })
 }
 
