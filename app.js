@@ -24,7 +24,7 @@ app.use('/fb/:appname', firebase)
 
 app.use('/gist/:gist_id', gist)
 
-app.use('/', aliases)
+app.use('/:alias', aliases)
 
 // Handle errors
 app.use(error)

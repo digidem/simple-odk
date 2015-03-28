@@ -33,7 +33,7 @@ var formStores = {
 
 var DEFAULT_S3_BUCKET = process.env.S3_BUCKET
 
-var vhostConfig
+var vhostConfig = {}
 
 // Read domain config from a file if the environment variable is not set
 // (used for local testing)
@@ -44,14 +44,12 @@ if (process.env.VHOSTS) {
     vhostConfig = JSON.parse(process.env.VHOSTS.replace(/\\/g, ''))
   } catch (e) {
     console.error('Problem parsing VHOST env variable', e.message)
-    vhostConfig = {}
   }
 } else {
   try {
     vhostConfig = require('../vhost-config')
   } catch (e) {
     console.log('No valid vhost config found')
-    vhostConfig = {}
   }
 }
 
@@ -62,7 +60,7 @@ for (var domain in vhostConfig) {
 
 function setupRoute (domain, config) {
   try {
-    checkConfig(config)
+    checkConfig(config, domain)
     config.s3bucket = config.s3bucket || DEFAULT_S3_BUCKET
     router.use(vhost(domain, function (req, res, next) {
       extend(req.params, config)
