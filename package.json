@@ -29,7 +29,6 @@
     "mkdirp": "^0.5.0",
     "morgan": "^1.5.2",
     "node-cache": "^1.1.0",
-    "node-expat": "^2.3.7",
     "octokat": "^0.4.7",
     "openrosa-form-submission-middleware": "^1.0.3",
     "openrosa-formlist": "^1.0.1",
