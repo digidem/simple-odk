@@ -56,7 +56,7 @@ var stubs = {
 
 var aliases = proxyquire('../../routes/aliases', stubs)
 
-app.use('/', aliases)
+app.use('/:alias', aliases)
 
 test('Routes to Github', function (t) {
   request(app)
