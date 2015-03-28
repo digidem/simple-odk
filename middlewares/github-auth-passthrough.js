@@ -2,7 +2,7 @@ var basicAuth = require('basic-auth')
 var request = require('request')
 var debug = require('debug')('simple-odk:github-auth')
 var NodeCache = require('node-cache')
-var avon = require('avon')
+var createHash = require('../helpers/sha-hash.js')
 
 var authCache = new NodeCache({ stdTTL: 300 })
 
@@ -25,38 +25,34 @@ function GithubAuth () {
 
     debug('checking github auth')
 
-    // We use a blake2b hash of the authoriation header to cache auth
-    // details, as a little added security that avoids user passwords
-    // being accessed from the cache store
-    avon.blake2b(new Buffer(req.headers.authorization), function (err, buff) {
-      if (err) return next(err)
+    // We're going to cache auth details for 5 mins, so we avoid
+    // repeat lookups on Github, but we'll only cache a hash of
+    // the auth header, for a little added security
+    var hash = createHash(req.headers.authorization)
 
-      var hash = buff.toString('hex')
+    // Check if we have already checked this user/pass
+    // Authorization will always be handled by the Github API,
+    // this just caches our check which initially forces ODK collect
+    // to send and Authorization header
+    authCache.get(hash, function (err, value) {
+      if (!err & value[hash]) {
+        debug('user auth cached, authorized')
+        return next()
+      }
 
-      // Check if we have already checked this user/pass
-      // Authorization will always be handled by the Github API,
-      // this just caches our check which initially forces ODK collect
-      // to send and Authorization header
-      authCache.get(hash, function (err, value) {
-        if (!err & value[hash]) {
-          debug('user auth cached, authorized')
-          return next()
-        }
-
-        debug('authorizing against api.github.com/user')
-        request
-          .get('https://api.github.com/user')
-          .auth(auth.name, auth.pass, true)
-          .on('response', function (response) {
-            var unauthorized = (response.statusCode === 401 || response.statusCode === 404)
-            if (unauthorized) return unauthorized()
-            if (response.statusCode === 200) return authorized(hash)
-            var err = new Error('Authentication error')
-            err.status = response.statusCode
-            next(err)
-          })
-          .on('error', next)
-      })
+      debug('authorizing against api.github.com/user')
+      request
+        .get('https://api.github.com/user')
+        .auth(auth.name, auth.pass, true)
+        .on('error', next)
+        .on('response', function (response) {
+          var unauthorized = (response.statusCode === 401 || response.statusCode === 404)
+          if (unauthorized) return unauthorized()
+          if (response.statusCode === 200) return authorized(hash)
+          var err = new Error('Authentication error')
+          err.status = response.statusCode
+          next(err)
+        })
     })
 
     function authorized (hash) {

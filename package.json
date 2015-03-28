@@ -17,7 +17,6 @@
   "license": "MIT",
   "dependencies": {
     "async": "^0.9.0",
-    "avon": "^0.2.0",
     "basic-auth": "^1.0.0",
     "charset": "^1.0.0",
     "debug": "^2.1.1",
