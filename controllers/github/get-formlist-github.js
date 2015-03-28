@@ -30,7 +30,7 @@ module.exports = function (req, res, next) {
     var formlistOptions = {
       headers: options.headers,
       auth: {
-        name: options.auth.name,
+        user: options.auth.name,
         pass: options.auth.pass
       }
     }
