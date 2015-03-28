@@ -18,7 +18,7 @@ var cloudInit = fs.readFileSync(__dirname + '/cloud-init.sh', 'utf-8')
 var config = {
   name: 'simple-odk',
   region: 'nyc3',
-  size: '1gb',
+  size: '512mb',
   image: 'dokku',
   ssh_keys: [
     keyFingerprint
@@ -40,6 +40,8 @@ function addKeyToAccount (err) {
 
 function createDroplet (err) {
   if (err) return console.error(err)
-  api.dropletsCreate(config, console.log)
+  api.dropletsCreate(config, function (err, res) {
+    if (err) console.log(err)
+    res.pipe(process.stdout)
+  })
 }
-
