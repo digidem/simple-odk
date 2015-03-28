@@ -24,7 +24,6 @@ function addS3bucket (req, res, next) {
 router.use(GithubAuth())
 
 router.route('/forms/:blob_sha')
-  .all(OpenRosaHeaders())
   .get(getForm)
 
 router.route('/formList')
