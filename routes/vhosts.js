@@ -10,8 +10,8 @@
  * VHOSTS = {
  *   "odk.example.com": {
  *     "formStore": "github",
- *     "githubUser": "username",
- *     "githubRepo": "reponame"
+ *     "user": "username",
+ *     "repo": "reponame"
  *   },
  *   "odk.myserver.com": {
  *     "formStore": "firebase",
@@ -38,10 +38,8 @@ var vhostConfig = {}
 // Read domain config from a file if the environment variable is not set
 // (used for local testing)
 if (process.env.VHOSTS) {
-  // TODO: This is a hack to work around escaped strings problems
-  // stored in env variables. May cause problems in the future, look out!
   try {
-    vhostConfig = JSON.parse(process.env.VHOSTS.replace(/\\/g, ''))
+    vhostConfig = JSON.parse(process.env.VHOSTS)
   } catch (e) {
     console.error('Problem parsing VHOST env variable', e.message)
   }

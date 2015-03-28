@@ -7,8 +7,8 @@
  * ALIASES = {
  *   "shortname": {
  *     "formStore": "github",
- *     "githubUser": "username",
- *     "githubRepo": "reponame"
+ *     "user": "username",
+ *     "repo": "reponame"
  *   },
  *   "bananas": {
  *     "formStore": "firebase",
@@ -35,10 +35,8 @@ var aliasConfig = {}
 // Read domain config from a file if the environment variable is not set
 // (used for local testing)
 if (process.env.ALIASES) {
-  // TODO: This is a hack to work around escaped strings problems
-  // stored in env variables. May cause problems in the future, look out!
   try {
-    aliasConfig = JSON.parse(process.env.ALIASES.replace(/\\/g, ''))
+    aliasConfig = JSON.parse(process.env.ALIASES)
   } catch (e) {
     console.error('Problem parsing ALIASES env variable', e.message)
   }
