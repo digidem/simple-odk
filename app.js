@@ -18,10 +18,6 @@ app.get('/', function (req, res) {
 
 app.use('/', vhosts)
 
-app.get('/loaderio-eb0629067569d8381fe61d42a7500f01', function (req, res) {
-  res.send('loaderio-eb0629067569d8381fe61d42a7500f01')
-})
-
 app.use('/gh/:user/:repo', github)
 
 app.use('/fb/:appname', firebase)
