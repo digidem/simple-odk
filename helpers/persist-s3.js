@@ -16,7 +16,9 @@ module.exports = function (data, options, callback) {
   if (!options.s3bucket) return callback(new Error('Need options.s3bucket'))
   if (!options.file) return callback(new Error('Need options.file'))
   if (!options.file.size) return callback(new Error('Need options.file.size'))
-  if (!options.file.filename) return callback(new Error('Need options.file.filename'))
+  if (!options.filename) return callback(new Error('Need options.file.filename'))
+
+  debug('saving %s to bucket %s', options.filename, options.s3bucket)
 
   var s3Client = knox.createClient({
     key: options.s3key || process.env.S3_KEY,
