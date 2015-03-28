@@ -54,8 +54,7 @@ for (var alias in aliasConfig) {
 }
 
 router.use(function (req, res, next) {
-  // This router can be used as a module for setting the default route
-  var alias = (req.params.alias === undefined) ? '/' : req.params.alias
+  var alias = req.params.alias
   var config = aliasConfig[alias]
 
   if (!config) return next()
