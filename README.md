@@ -1,7 +1,22 @@
 Simple ODK
 =============
 
-[![Build Status](https://travis-ci.org/digidem/simple-odk.svg)](https://travis-ci.org/digidem/simple-odk)
+[![travis][travis-image]][travis-url]
+[![npm][npm-image]][npm-url]
+[![downloads][downloads-image]][downloads-url]
+[![js-standard-style][style-image]][style-url] 
+[![donate][gratipay-image]][gratipay-url]
+
+[travis-image]: https://img.shields.io/travis/digidem/simple-odk.svg?style=flat
+[travis-url]: https://travis-ci.org/digidem/simple-odk
+[npm-image]: https://img.shields.io/npm/v/simple-odk.svg?style=flat
+[npm-url]: https://npmjs.org/package/simple-odk
+[downloads-image]: https://img.shields.io/npm/dm/simple-odk.svg?style=flat
+[downloads-url]: https://npmjs.org/package/simple-odk
+[style-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat
+[style-url]: https://github.com/feross/standard
+[gratipay-image]: https://img.shields.io/gratipay/Digital%20Democracy.svg
+[gratipay-url]: https://gratipay.com/Digital%20Democracy/
 
 **Currently experimental, things will change and potentially break**
 
