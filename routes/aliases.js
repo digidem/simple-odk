@@ -54,14 +54,16 @@ for (var alias in aliasConfig) {
 }
 
 router.use(function (req, res, next) {
-  var config = aliasConfig[req.params.alias]
-  debug('request on alias', req.params.alias)
-  if (!config) return res.sendStatus(404)
+  // This router can be used as a module for setting the default route
+  var alias = (req.params.alias === undefined) ? '/' : req.params.alias
+  var config = aliasConfig[alias]
+
+  if (!config) return next()
 
   config.s3bucket = config.s3bucket || DEFAULT_S3_BUCKET
-
   extend(req.params, config)
 
+  debug('routing $s to %s', alias, config.formStore)
   formStores[config.formStore](req, res, next)
 })
 
