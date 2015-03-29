@@ -10,6 +10,7 @@ function FirebaseAuth () {
   return function (req, res, next) {
     var user = auth(req)
     var firebaseApp = req.params.appname
+    var t0 = Date.now()
 
     if (user === undefined || !firebaseApp) return unauthorized()
     debug('checking auth for user')
@@ -24,7 +25,7 @@ function FirebaseAuth () {
     function authHandler (err) {
       if (err) return unauthorized()
       req.firebase = ref
-      debug('authorized user')
+      debug('authorized user in %s ms', Date.now() - t0)
       next()
     }
 

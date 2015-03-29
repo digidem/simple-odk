@@ -20,6 +20,7 @@ request = request.defaults({
 function GithubAuth () {
   return function (req, res, next) {
     var auth = basicAuth(req)
+    var t0 = Date.now()
 
     if (auth === undefined) return unauthorized()
 
@@ -58,7 +59,7 @@ function GithubAuth () {
     function authorized (hash) {
       // Cache the authorization in memory for 5 mins
       authCache.set(hash, true)
-      debug('user authorized')
+      debug('user authorized in %s ms', Date.now() - t0)
       next()
     }
 

@@ -12,6 +12,8 @@ var defaults = {
  */
 function ProcessSubmission (options) {
   return function (req, res, next) {
+    var t0 = Date.now()
+
     if (!req.body.length) {
       return next(new Error('No form submission found'))
     }
@@ -37,7 +39,7 @@ function ProcessSubmission (options) {
         instanceId: meta.instanceId.replace(/^uuid:/, '')
       }
 
-      debug('Processed xml submission as json')
+      debug('Processed xml submission as json in %s ms', Date.now() - t0)
       next()
     })
   }

@@ -12,10 +12,10 @@ function saveForm (req, res, next) {
     .child(submission.instanceId)
     .set(submission.json, function (err) {
       if (err) return next(err)
-      debug('saved form %s to firebase in %s ms', submission.instanceId, Date.now() - t0)
       res.status(201).send({
         saved: submission.instanceId
       })
+      debug('saved form %s to firebase in %s ms', submission.instanceId, Date.now() - t0)
     })
 }
 

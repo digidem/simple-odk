@@ -31,7 +31,13 @@ router.route('/formList')
   .get(getFormlist)
 
 router.route('/submission')
-  .all(FormSubmissionMiddleware())
+  .all(function (req, res, next) {
+    var t0 = Date.now()
+    FormSubmissionMiddleware()(req, res, function () {
+      console.log('Form submission middleware took %s ms', Date.now() - t0)
+      next()
+    })
+  })
   .post(ProcessSubmission())
   .post(addS3bucket)
   .post(SaveMedia())
