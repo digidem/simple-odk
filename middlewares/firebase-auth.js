@@ -51,12 +51,12 @@ function FirebaseAuth () {
         debug('authorized user in %s ms', Date.now() - t0)
         next()
       }
+    })
 
-      function unauthorized () {
-        res.statusCode = 401
-        res.setHeader('WWW-Authenticate', 'Basic realm=simple-odk')
-        res.send('Unauthorized')
-      }
+    function unauthorized () {
+      res.statusCode = 401
+      res.setHeader('WWW-Authenticate', 'Basic realm=simple-odk')
+      res.send('Unauthorized')
     }
   }
 }
