@@ -1,1 +1,1 @@
-web: node --prof --trace-gc server.js
+web: node server.js
