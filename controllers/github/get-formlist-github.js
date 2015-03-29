@@ -1,7 +1,11 @@
 var basicAuth = require('basic-auth')
 var createFormList = require('openrosa-formlist')
 var debug = require('debug')('simple-odk:get-formlist-github')
+var cacheManager = require('cache-manager')
+
 var getFormUrls = require('../../helpers/get-form-urls-github')
+
+var formListCache = cacheManager.caching({store: 'memory', max: 500, ttl: 300/*seconds*/})
 
 /**
  * Searches for xml form files on Github and returns a valid
@@ -9,7 +13,7 @@ var getFormUrls = require('../../helpers/get-form-urls-github')
  */
 module.exports = function (req, res, next) {
   var auth = basicAuth(req)
-  var protocol = 'http'//req.hostname === 'localhost' ? 'http' : 'https'
+  var protocol = req.hostname === 'localhost' ? 'http' : 'https'
 
   var options = {
     user: req.params.user,
@@ -21,24 +25,28 @@ module.exports = function (req, res, next) {
     baseUrl: protocol + '://' + req.headers.host + req.baseUrl + '/forms'
   }
 
-  debug('Called formList for repo %s auth %s', options.user + '/' + options.repo)
+  var cacheKey = options.user + '/' + options.repo
 
-  getFormUrls(options, function (err, formUrls) {
-    if (err) return next(err)
-    debug('got form urls', formUrls)
+  debug('Called formList for repo %s auth %s', cacheKey)
 
-    var formlistOptions = {
-      headers: options.headers,
-      auth: {
-        user: options.auth.name,
-        pass: options.auth.pass
-      }
-    }
-
-    createFormList(formUrls, formlistOptions, function (err, formlistXml) {
+  formListCache.wrap(cacheKey, function (cb) {
+    getFormUrls(options, function (err, formUrls) {
       if (err) return next(err)
-      res.set('content-type', 'text/xml; charset=utf-8')
-      res.status(200).send(formlistXml)
+      debug('got form urls', formUrls)
+
+      var formlistOptions = {
+        headers: options.headers,
+        auth: {
+          user: options.auth.name,
+          pass: options.auth.pass
+        }
+      }
+
+      createFormList(formUrls, formlistOptions, cb)
     })
+  }, function (err, formlistXml) {
+    if (err) return next(err)
+    res.set('content-type', 'text/xml; charset=utf-8')
+    res.status(200).send(formlistXml)
   })
 }
