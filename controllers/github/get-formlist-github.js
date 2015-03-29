@@ -9,7 +9,7 @@ var getFormUrls = require('../../helpers/get-form-urls-github')
  */
 module.exports = function (req, res, next) {
   var auth = basicAuth(req)
-  var protocol = req.hostname === 'localhost' ? 'http' : 'https'
+  var protocol = 'http'//req.hostname === 'localhost' ? 'http' : 'https'
 
   var options = {
     user: req.params.user,
