@@ -30,7 +30,7 @@ function FirebaseAuth () {
     // this just caches our check which initially forces ODK collect
     // to send and Authorization header
     authCache.get(hash, function (err, value) {
-      if (!err & value[hash]) {
+      if (!err && value[hash]) {
         req.firebase = value[hash]
         debug('user auth cached, authorized in %s ms', Date.now() - t0)
         return next()

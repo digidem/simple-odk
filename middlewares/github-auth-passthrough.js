@@ -36,7 +36,7 @@ function GithubAuth () {
     // this just caches our check which initially forces ODK collect
     // to send and Authorization header
     authCache.get(hash, function (err, value) {
-      if (!err & value[hash]) {
+      if (!err && value[hash]) {
         debug('user auth cached, authorized')
         return next()
       }
