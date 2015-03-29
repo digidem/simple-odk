@@ -13,7 +13,7 @@ var formListCache = cacheManager.caching({store: 'memory', max: 500, ttl: 300/*s
  */
 module.exports = function (req, res, next) {
   var auth = basicAuth(req)
-  var protocol = req.hostname === 'localhost' ? 'http' : 'https'
+  var protocol = 'http' //req.hostname === 'localhost' ? 'http' : 'https'
 
   var options = {
     user: req.params.user,
