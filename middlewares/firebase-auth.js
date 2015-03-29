@@ -1,5 +1,6 @@
 var auth = require('basic-auth')
 var Firebase = require('firebase')
+var debug = require('debug')('simple-odk:fb-auth')
 
 /**
  * Middleware to authenticate to Firebase with Basic Auth. Attaches the
@@ -11,6 +12,7 @@ function FirebaseAuth () {
     var firebaseApp = req.params.appname
 
     if (user === undefined || !firebaseApp) return unauthorized()
+    debug('checking auth for user')
 
     var ref = new Firebase('https://' + firebaseApp + '.firebaseio.com')
 
@@ -22,6 +24,7 @@ function FirebaseAuth () {
     function authHandler (err) {
       if (err) return unauthorized()
       req.firebase = ref
+      debug('authorized user')
       next()
     }
 
