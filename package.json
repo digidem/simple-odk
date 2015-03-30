@@ -53,7 +53,8 @@
     "tape": "^3.5.0"
   },
   "scripts": {
-    "start": "env $(cat .env | xargs) node server.js",
+    "start": "node server.js",
+    "start-dev": "env $(cat .env | xargs) node server.js",
     "test": "standard && tape tests/**/*.test.js | tap-spec",
     "provision": "bin/provision.js",
     "deploy": "bin/deploy.sh"
