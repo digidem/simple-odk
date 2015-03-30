@@ -2,3 +2,7 @@ language: node_js
 node_js:
 - '0.10'
 - '0.12'
+notifications:
+  hipchat:
+    rooms:
+      secure: Bodl0IzbPe0x7rXknp3o/Fe8+A/jEmfOdTEowOeBhE5za/WPpro8ThvU9/szqKWzRLiQ3UoNWVO4H1ZvZzs+4dwCa9yY0HfmRAPMp+KPeMaNcinbDscec7bRWIN9exig8pKUbxDfoO8M47KsFQZgHK/sstcJhJWsaX/xc1FO9wQ=
