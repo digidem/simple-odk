@@ -1,6 +1,5 @@
 // Saves a file to github
 
-var Octokat = require('octokat')
 var Hubfs = require('hubfs.js')
 var extend = require('xtend')
 var basicAuth = require('basic-auth')
@@ -20,17 +19,19 @@ function saveForm (req, res, next) {
   var auth = basicAuth(req)
   var options = extend(defaults, options)
 
-  var octo = new Octokat({
-    username: auth.name,
-    password: auth.pass
-  })
-
   var writeOptions = {
     message: 'Added new form response ' + filename,
     branch: options.branch
   }
 
-  var hubfs = new Hubfs(octo.repos(user, repo))
+  var hubfs = new Hubfs({
+    owner: user,
+    repo: repo,
+    auth: {
+      username: auth.name,
+      password: auth.pass
+    }
+  })
 
   hubfs.writeFile(filename, json, writeOptions, function (err) {
     if (err) return next(err)

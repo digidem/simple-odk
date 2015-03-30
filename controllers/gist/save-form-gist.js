@@ -1,6 +1,5 @@
 // Saves a file to a gist
 
-var Octokat = require('octokat')
 var Gistfs = require('gistfs.js')
 var auth = require('basic-auth')
 var debug = require('debug')('simple-odk:save-form-gist')
@@ -11,12 +10,13 @@ function saveForm (req, res, next) {
   var user = auth(req)
   var featureCollection
 
-  var octo = new Octokat({
-    username: user.name,
-    password: user.pass
+  var gistfs = new Gistfs({
+    gistId: req.params.gist_id,
+    auth: {
+      username: user.name,
+      password: user.pass
+    }
   })
-
-  var gistfs = new Gistfs(octo.gists(req.params.gist_id))
 
   gistfs.readFile(filename, { encoding: 'utf8' }, function (err, data) {
     if (err) {

@@ -8,9 +8,11 @@ var app = express()
 
 var submission = require('../fixtures/req-submission')
 
+var reqGithub = require('../fixtures/req-github')
+
 // Mock the req
 function mockReq (req, res, next) {
-  extend(req, require('../fixtures/req-github'))
+  extend(req, reqGithub)
   extend(req, submission)
   next()
 }
@@ -18,7 +20,11 @@ function mockReq (req, res, next) {
 test('Calls hubfs.writeFile with correct args', function (t) {
   // stub out hubfs
   var stubs = {
-  'hubfs.js': function () {
+  'hubfs.js': function (options) {
+    t.equal(options.owner, reqGithub.params.user)
+    t.equal(options.repo, reqGithub.params.repo)
+    t.equal(options.auth.username, 'test')
+    t.equal(options.auth.password, 'test')
     return {
       writeFile: function (filename, data, options, callback) {
         t.equal(filename, 'submissions/abcd/efgh.geojson', 'filename is correct')
