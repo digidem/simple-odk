@@ -58,7 +58,7 @@ function GithubAuth () {
 
 function checkAuth (auth, callback) {
   request
-    .get('https://api.github.com/user')
+    .head('https://api.github.com/user')
     .auth(auth.name, auth.pass, true)
     .on('error', callback)
     .on('response', function (response) {
