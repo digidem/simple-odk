@@ -29,7 +29,7 @@ module.exports = function (data, options, callback) {
   var headers = {
     'content-length': options.file.size,
     'content-type': options.file.headers['content-type'] || mime.lookup(options.filename),
-    'cache-control': 'max-age=31536000'
+    'cache-control': 'max-age=31536000, public'
   }
 
   var req = s3Client.put(options.filename, headers)
