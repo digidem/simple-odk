@@ -4,7 +4,7 @@
   "description": "A minimal ODK server for receiving form submissions from a mobile device and saving them as JSON on github",
   "main": "app.js",
   "engines": {
-    "iojs": "~1.6.2"
+    "node": "5.x"
   },
   "repository": {
     "type": "git",
