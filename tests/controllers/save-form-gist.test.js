@@ -4,9 +4,9 @@ var request = require('supertest')
 var express = require('express')
 var extend = require('xtend/mutable')
 
-var submission = require('../fixtures/req-submission')
+var submission = require('../fixtures/req-submission.json')
 
-var reqGist = require('../fixtures/req-gist')
+var reqGist = require('../fixtures/req-gist.json')
 
 // Mock the req
 function mockReq (req, res, next) {
@@ -60,10 +60,10 @@ test('Appends geojson feature to existing feature collection in gist', function 
   gistfsStubs = {
     readFile: function (filename, options, callback) {
       // Read file returns Feature Collection, reflecting geojson already exists in gist
-      callback(null, JSON.stringify(require('../fixtures/single-geojson')))
+      callback(null, JSON.stringify(require('../fixtures/single-geojson.json')))
     },
     writeFile: function (filename, data, callback) {
-      var expected = require('../fixtures/single-geojson')
+      var expected = require('../fixtures/single-geojson.json')
       expected.features.push(submission.submission.json)
       t.equal(filename, 'abcd.geojson', 'filename is correct')
       t.deepEqual(JSON.parse(data), expected, 'updates existing geojson feature collection')

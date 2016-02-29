@@ -6,9 +6,9 @@ var extend = require('xtend/mutable')
 
 var app = express()
 
-var submission = require('../fixtures/req-submission')
+var submission = require('../fixtures/req-submission.json')
 
-var reqGithub = require('../fixtures/req-github')
+var reqGithub = require('../fixtures/req-github.json')
 
 // Mock the req
 function mockReq (req, res, next) {

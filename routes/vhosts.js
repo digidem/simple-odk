@@ -45,7 +45,7 @@ if (process.env.VHOSTS) {
   }
 } else {
   try {
-    vhostConfig = require('../vhost-config')
+    vhostConfig = require('../vhost-config.json')
   } catch (e) {
     console.log('No valid vhost config found')
   }

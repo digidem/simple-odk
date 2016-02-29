@@ -18,7 +18,7 @@ var auth = {
 
 // Mock the req
 function mockReq (req, res, next) {
-  extend(req, require('../fixtures/req-gist'))
+  extend(req, require('../fixtures/req-gist.json'))
   next()
 }
 
@@ -30,7 +30,7 @@ var stubs = {
       gists: function () {
         return {
           fetch: function (callback) {
-            callback(null, require('../fixtures/test-gist'))
+            callback(null, require('../fixtures/test-gist.json'))
           }
         }
       }

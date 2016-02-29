@@ -9,7 +9,7 @@ var file = {
 }
 
 test('Updates form replacing the filename with url and original filename', function (t) {
-  var expected = require('../fixtures/form-media-updated')
+  var expected = require('../fixtures/form-media-updated.json')
   updateFileRef(form, file)
   t.deepEqual(form, expected, 'form matches expected')
   t.end()

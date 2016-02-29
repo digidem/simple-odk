@@ -42,7 +42,7 @@ if (process.env.ALIASES) {
   }
 } else {
   try {
-    aliasConfig = require('../alias-config')
+    aliasConfig = require('../alias-config.json')
   } catch (e) {
     console.info('No valid alias config found')
   }

@@ -17,7 +17,7 @@ var getForm = proxyquire('../../controllers/github/get-form-github', stubs)
 
 // Mock the req
 function mockReq (req, res, next) {
-  extend(req, require('../fixtures/req-github'))
+  extend(req, require('../fixtures/req-github.json'))
   req.params.blob_sha = 'abcdef'
   next()
 }

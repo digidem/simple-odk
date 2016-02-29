@@ -9,11 +9,11 @@ var app = express()
 
 // Mock the req
 function mockReq (req, res, next) {
-  extend(req, require('../fixtures/req-github'))
+  extend(req, require('../fixtures/req-github.json'))
   next()
 }
 
-var formUrls = require('../fixtures/formlist-github').array
+var formUrls = require('../fixtures/formlist-github.json').array
 var formlistXml = fs.readFileSync(path.join(__dirname, '/../fixtures/formlist.xml')).toString().trim()
 
 var stubs = {

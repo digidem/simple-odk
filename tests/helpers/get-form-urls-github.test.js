@@ -18,7 +18,7 @@ var options = {
 }
 
 test('Returns expected list of urls from Github repo', function (t) {
-  var expectedUrls = require('../fixtures/formlist-github').array
+  var expectedUrls = require('../fixtures/formlist-github.json').array
   getFormUrls(options, function (err, urls) {
     t.error(err, 'does not throw err')
     t.deepEqual(urls, expectedUrls, 'returned array matches fixture')
