@@ -4,7 +4,7 @@ var debug = require('debug')('simple-odk:fb-auth')
 var cacheManager = require('cache-manager')
 var createHash = require('../helpers/sha-hash.js')
 
-var authCache = cacheManager.caching({store: 'memory', max: 500, ttl: 300/*seconds*/})
+var authCache = cacheManager.caching({store: 'memory', max: 500, ttl: 300})
 
 /**
  * Middleware to authenticate to Firebase with Basic Auth. Attaches the
@@ -59,23 +59,23 @@ function getAuthToken (options, callback) {
     '&password=' + options.pass +
     '&transport=json'
   request.get(authUrl, function (err, response, body) {
-      if (response.statusCode === 200) {
-        console.log(err)
-        try {
-          var token = JSON.parse(body).token
-          console.log(token)
-          callback(null, token)
-        } catch (e) {
-          console.log(e)
-          callback(e)
-        }
-      } else {
-        console.log(err)
-        err = err || new Error('Authentication error')
-        err.status = response.statusCode
-        callback(err)
+    if (response.statusCode === 200) {
+      console.log(err)
+      try {
+        var token = JSON.parse(body).token
+        console.log(token)
+        callback(null, token)
+      } catch (e) {
+        console.log(e)
+        callback(e)
       }
-    })
+    } else {
+      console.log(err)
+      err = err || new Error('Authentication error')
+      err.status = response.statusCode
+      callback(err)
+    }
+  })
 }
 
 module.exports = FirebaseAuth

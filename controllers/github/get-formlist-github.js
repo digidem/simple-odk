@@ -9,7 +9,7 @@ var getFormUrls = require('../../helpers/get-form-urls-github')
 var formListCache = cacheManager.caching({
   store: 'memory',
   max: 10 * 1000 * 1000,
-  ttl: 5 * 60, /*seconds*/
+  ttl: 5 * 60, /* seconds */
   length: function (s) { return s.length }
 })
 

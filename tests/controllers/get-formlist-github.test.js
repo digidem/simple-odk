@@ -4,6 +4,7 @@ var express = require('express')
 var proxyquire = require('proxyquire').noPreserveCache()
 var extend = require('xtend/mutable')
 var fs = require('fs')
+var path = require('path')
 var app = express()
 
 // Mock the req
@@ -13,7 +14,7 @@ function mockReq (req, res, next) {
 }
 
 var formUrls = require('../fixtures/formlist-github').array
-var formlistXml = fs.readFileSync(__dirname + '/../fixtures/formlist.xml').toString().trim()
+var formlistXml = fs.readFileSync(path.join(__dirname, '/../fixtures/formlist.xml')).toString().trim()
 
 var stubs = {
   '../../helpers/get-form-urls-github': function (options, callback) {

@@ -4,7 +4,7 @@ var debug = require('debug')('simple-odk:github-auth')
 var cacheManager = require('cache-manager')
 var createHash = require('../helpers/sha-hash.js')
 
-var authCache = cacheManager.caching({store: 'memory', max: 500, ttl: 300/*seconds*/})
+var authCache = cacheManager.caching({store: 'memory', max: 500, ttl: 300})
 
 request = request.defaults({
   headers: { 'User-Agent': 'simple-odk' }

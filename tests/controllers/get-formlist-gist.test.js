@@ -4,6 +4,7 @@ var express = require('express')
 var proxyquire = require('proxyquire').noPreserveCache()
 var extend = require('xtend/mutable')
 var fs = require('fs')
+var path = require('path')
 var dotenv = require('dotenv')
 
 var app = express()
@@ -21,7 +22,7 @@ function mockReq (req, res, next) {
   next()
 }
 
-var formlistXml = fs.readFileSync(__dirname + '/../fixtures/formlist-birds.xml').toString().trim()
+var formlistXml = fs.readFileSync(path.join(__dirname, '/../fixtures/formlist-birds.xml')).toString().trim()
 
 var stubs = {
   'octokat': function () {
