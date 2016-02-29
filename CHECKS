@@ -1,5 +1,0 @@
-# Dokku will run this check against the server before completing
-# the deployment
-# https://github.com/progrium/dokku/blob/master/docs/application-deployment.md#zero-downtime-deploy
-
-/   Simple ODK Server ready to receive submissions

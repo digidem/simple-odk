@@ -1,4 +1,2 @@
 node_modules
-vhost-config.json
-alias-config.json
 .env
