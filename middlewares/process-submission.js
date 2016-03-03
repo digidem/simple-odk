@@ -28,13 +28,14 @@ function ProcessSubmission (options) {
     xform2json(req.body, options, function (err, form) {
       if (err) return next(err)
       var meta = options.geojson ? form.properties.meta : form.meta
+      meta = extend({}, meta)
+      meta.instanceId = meta.instanceId.replace(/^uuid:/, '')
+      meta.ext = options.geojson ? 'geojson' : 'json'
 
-      req.submission = {
+      res.locals.submission = {
         json: form,
-        geojson: options.geojson,
         xml: req.body,
-        formId: meta.formId,
-        instanceId: meta.instanceId.replace(/^uuid:/, '')
+        meta: meta
       }
 
       debug('Processed xml submission as json')

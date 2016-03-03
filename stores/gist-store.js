@@ -1,112 +1,99 @@
 // Saves a file to github
 
-var Hubfs = require('hubfs.js')
+var Gistfs = require('hubfs.js')
 var extend = require('xtend')
 var debug = require('debug')('simple-odk:github-store')
 var concat = require('concat-stream')
-var through2 = require('through2')
-var https = require('https')
+var Stream = require('readable-stream')
 var Octokat = require('octokat')
+var request = require('request')
 var createFormList = require('openrosa-formlist')
 var formListCache = require('../helpers/cache')
 
 var defaults = {
-  branch: 'master',
   userAgent: 'simple-odk'
 }
 
 function Store (options) {
   this.options = extend(defaults, options)
-  this.hubfs = new Hubfs({
-    owner: options.user,
-    repo: options.repo,
+  this.gistfs = new Gistfs({
+    user: options.user,
+    gistId: options.gistId,
     auth: {
       username: options.auth.name,
       password: options.auth.pass
     }
   })
-  this.options.auth.user = this.options.auth.name
 }
 
-Store.prototype.saveForm = function (meta) {
-  var filename = 'submissions/' + meta.formId + '/' + meta.instanceId + '.' + meta.ext
-  var writeOptions = {
-    message: 'Added new form response ' + filename,
-    branch: this.options.branch
-  }
-  var stream = through2()
-  var hubfs = this.hubfs
+Store.prototype.saveForm = function (meta, callback) {
+  var filename = meta.formId + '.' + meta.ext
+  var featureCollection
+  var gistfs = this.gistfs
 
-  debug('saving %s to github repo %s', filename, this.options.user + '/' + this.options.repo)
-
-  function done (data) {
-    debug(data)
-    hubfs.writeFile(filename, data, writeOptions, function (err, data) {
-      if (err) return stream.emit('error', err)
-      debug('saved')
-      stream.push(data)
-      stream.push(null)
+  return concat(function(data) {
+    gistfs.readFile(filename, { encoding: 'utf8' }, function (err, existingData) {
+      if (err) {
+        featureCollection = {
+          type: 'FeatureCollection',
+          features: []
+        }
+        debug('creating new geojson feature collection', filename)
+      } else {
+        try {
+          featureCollection = JSON.parse(existingData)
+          debug('appending to existing feature collection', filename)
+        } catch (e) {
+          return callback(new Error('Cannot parse gist json'))
+        }
+      }
+      featureCollection.features.push(JSON.parse(data))
+      gistfs.writeFile(filename, JSON.stringify(featureCollection, null, '  '), function (err) {
+        if (err) return next(err)
+        debug('saved form response %s to gist %s', filename, req.params.gist_id)
+        res.status(201).send({
+          saved: filename
+        })
+      })
     })
-  }
-
-  stream.pipe(concat(done))
-
-  return stream
+  })
 }
 
 Store.prototype.getForm = function (id) {
-  var requestOptions = {
-    headers: {
-      'User-Agent': this.options.userAgent,
-      'Accept': 'application/vnd.github.v3.raw'
-    },
-    auth: this.options.auth.name + ':' + this.options.auth.pass,
-    hostname: 'api.github.com',
-    path: '/repos/' + this.options.user + '/' + this.options.repo + '/git/blobs/' + id
-  }
-  var stream = through2()
-
-  https.get(requestOptions, function (incoming) {
-    if (incoming.statusCode !== 200) {
-      var err = new Error('Problem connecting to Github')
-      err.status = incoming.statusCode
-      return stream.emit('error', err)
-    }
-    incoming.pipe(stream)
-  })
-
-  return stream
+  var formUrl = 'https://gist.githubusercontent.com/' + this.options.user + '/' +
+    this.options.gistId + '/raw/' + id
+  return request.get(formUrl)
 }
 
 Store.prototype.getFormList = function (baseUrl) {
-  var cacheKey = 'gh/' + this.options.user + '/' + this.options.repo
-  var stream = through2()
+  var cacheKey = this.options.user + '/' + this.options.repo
+  var stream = Stream.Readable()
   var _this = this
 
   debug('Called formList for repo %s', cacheKey)
 
-  formListCache.wrap(cacheKey, getFormListXml, function (err, buf) {
+  formListCache.wrap(cacheKey, getFormListXml, function (err, buff) {
     if (err) return stream.emit('error', err)
-    stream.push(buf)
+    stream.push(buff)
     stream.push(null)
   })
 
   function getFormListXml (cb) {
     _this._getFormUrls(baseUrl, function (err, formUrls) {
       if (err) return cb(err)
+
       var formlistOptions = {
         headers: {
-          'User-Agent': _this.options.userAgent
+          'User-Agent': this.options.userAgent
         },
-        auth: _this.options.auth
+        auth: this.options.auth
       }
+
       createFormList(formUrls, formlistOptions, function (err, xml) {
         cb(err, new Buffer(xml))
       })
     })
   }
-
-  return stream
 }
 
 /**

@@ -4,7 +4,7 @@
   "description": "A minimal ODK server for receiving form submissions from a mobile device and saving them as JSON on github",
   "main": "app.js",
   "engines": {
-    "iojs": "~1.6.2"
+    "node": "5.x"
   },
   "repository": {
     "type": "git",
@@ -30,10 +30,11 @@
     "mkdirp": "^0.5.0",
     "morgan": "^1.5.2",
     "octokat": "^0.4.7",
-    "openrosa-form-submission-middleware": "^1.0.3",
+    "openrosa-form-submission-middleware": "^1.1.0",
     "openrosa-formlist": "^1.0.1",
     "openrosa-manifest": "0.0.1",
-    "openrosa-request-middleware": "^1.0.1",
+    "openrosa-request-middleware": "^1.1.0",
+    "readable-stream": "~1.1.0",
     "request": "^2.40.0",
     "resumer": "0.0.0",
     "traverse": "^0.6.6",
