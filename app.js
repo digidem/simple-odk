@@ -1,5 +1,6 @@
 var express = require('express')
 var morgan = require('morgan')
+var cors = require('cors')
 
 var vhosts = require('./routes/vhosts')
 var github = require('./routes/github')
@@ -11,6 +12,7 @@ var error = require('./controllers/error-handler')
 var app = express()
 
 app.use(morgan('dev'))
+app.use(cors())
 
 app.get('/', function (req, res) {
   res.send('Simple ODK Server ready to receive submissions')
