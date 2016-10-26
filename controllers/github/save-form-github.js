@@ -3,6 +3,7 @@
 var Hubfs = require('hubfs.js')
 var extend = require('xtend')
 var basicAuth = require('basic-auth')
+var indexOf = require('indexof-property')('id')
 var debug = require('debug')('simple-odk:save-form-github')
 
 var defaults = {
@@ -48,7 +49,13 @@ function saveForm (req, res, next) {
         return next(new Error('Cannot parse gist json'))
       }
     }
-    featureCollection.features.push(submission.json)
+    var features = featureCollection.features
+    var existingIdx = submission.json.id ? indexOf(features, submission.json.id) : -1
+    if (existingIdx < 0) {
+      features.push(submission.json)
+    } else {
+      features[existingIdx] = submission.json
+    }
     hubfs.writeFile(filename, JSON.stringify(featureCollection, null, '  '), writeOptions, function (err) {
       if (err) return next(err)
       debug('saved form response %s to github repo %s', filename, user + '/' + repo)

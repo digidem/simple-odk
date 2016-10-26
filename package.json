@@ -24,6 +24,7 @@
     "express": "^4.13.4",
     "gistfs.js": "^1.0.0",
     "hubfs.js": "^1.0.0",
+    "indexof-property": "^1.1.1",
     "knox": "^0.9.2",
     "mime-types": "^2.1.10",
     "mkdirp": "^0.5.1",
@@ -36,7 +37,7 @@
     "resumer": "0.0.0",
     "traverse": "^0.6.6",
     "vhost": "^3.0.2",
-    "xform-to-json": "^1.1.0",
+    "xform-to-json": "^1.2.0",
     "xtend": "^4.0.1"
   },
   "devDependencies": {
