@@ -1,6 +1,8 @@
 Simple ODK
 =============
 
+[![Join the chat at https://gitter.im/digidem/simple-odk](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/digidem/simple-odk?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![travis][travis-image]][travis-url]
 [![npm][npm-image]][npm-url]
 [![downloads][downloads-image]][downloads-url]
